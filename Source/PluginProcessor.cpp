@@ -21,6 +21,7 @@ AudioProcessor::AudioProcessor() :
     castParameter(apvts, ParameterID::invertLeft, invertLeftParam);
     castParameter(apvts, ParameterID::invertRight, invertRightParam);
     castParameter(apvts, ParameterID::swapChannels, swapChannelsParam);
+    castParameter(apvts, ParameterID::channels, channelsParam);
 }
 
 AudioProcessor::~AudioProcessor()
@@ -59,6 +60,12 @@ juce::AudioProcessorValueTreeState::ParameterLayout AudioProcessor::createParame
         "Swap Left and Right",
         false));
 
+    layout.add(std::make_unique<juce::AudioParameterChoice>(
+        ParameterID::channels,
+        "Output Channels",
+        juce::StringArray({ "All", "Mids", "Sides" }),
+        0));
+
     return layout;
 }
 
@@ -95,6 +102,7 @@ void AudioProcessor::update() noexcept
     invertLeft = invertLeftParam->get();
     invertRight = invertRightParam->get();
     swapChannels = swapChannelsParam->get();
+    channels = channelsParam->getIndex();
 }
 
 void AudioProcessor::smoothen() noexcept
@@ -142,8 +150,15 @@ void AudioProcessor::processBlock(
             std::swap(sampleL, sampleR);
         }
 
-        float M = (sampleL + sampleR) * 0.5f;
-        float S = (sampleL - sampleR) * 0.5f;
+        if (channels == 1) {
+            float M = (sampleL + sampleR) * 0.5f;
+            sampleL = sampleR = M;
+        } else if (channels == 2) {
+            float S = (sampleL - sampleR) * 0.5f;
+            sampleL = sampleR = S;
+        }
+
+//TODO protectyourears
 
         channelL[sample] = sampleL;
         channelR[sample] = sampleR;

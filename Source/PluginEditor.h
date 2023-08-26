@@ -23,6 +23,8 @@ private:
     AudioProcessor& audioProcessor;
 
     RotaryKnob gainKnob;
+    juce::TextButton minus6Button;
+    juce::TextButton minus12Button;
     juce::TextButton bypassButton;
     juce::TextButton invertLeftButton;
     juce::TextButton invertRightButton;
@@ -44,6 +46,9 @@ private:
     ButtonAttachment swapChannelsAttachment {
         audioProcessor.apvts, ParameterID::swapChannels.getParamID(), swapChannelsButton
     };
+//    ComboBoxAttachment comboBoxAttachment {
+//        audioProcessor.apvts, ParameterID::channels.getParamID(), channelsPicker
+//    };
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(AudioProcessorEditor)
 };

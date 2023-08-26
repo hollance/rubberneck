@@ -21,12 +21,6 @@
 -	protectYourEars built into this
   -	with a button to turn it off
   -	with warning light in the UI (green = OK, orange = clipping, red = killed the sound)
+
 -	mono output (+ sides only mode)  [all | mids | sides]
   - see StereoOMG for styling of this control / custom control
-
-- -6 dB and -12 dB buttons (0.5 and 0.25) to change the gain parameter
-
-- bypass button styling
-  - also make it go down by one pixel, don't make font smaller
-  - also tiny "drop shadow"? (just draw rounded rect with alpha)
-- button styling

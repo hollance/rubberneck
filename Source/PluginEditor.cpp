@@ -55,6 +55,33 @@ AudioProcessorEditor::AudioProcessorEditor(AudioProcessor& p)
     swapChannelsButton.setLookAndFeel(ButtonLookAndFeel::get());
     addAndMakeVisible(swapChannelsButton);
 
+    minus6Button.setTitle("-6 dB");
+    minus6Button.setDescription("Set the gain to -6 dB");
+    minus6Button.setHelpText(minus6Button.getDescription());
+    minus6Button.setTooltip(minus6Button.getHelpText());
+    minus6Button.setButtonText("-6 dB");
+    minus6Button.setBounds(0, 0, 60, 30);
+    minus6Button.setLookAndFeel(ButtonLookAndFeel::get());
+    minus6Button.onClick = [this](){
+        audioProcessor.gainParam->setValueNotifyingHost(audioProcessor.gainParam->convertTo0to1(-6.0f));
+    };
+    addAndMakeVisible(minus6Button);
+
+    minus12Button.setTitle("-12 dB");
+    minus12Button.setDescription("Set the gain to -12 dB");
+    minus12Button.setHelpText(minus12Button.getDescription());
+    minus12Button.setTooltip(minus12Button.getHelpText());
+    minus12Button.setButtonText("-12 dB");
+    minus12Button.setBounds(0, 0, 60, 30);
+    minus12Button.setLookAndFeel(ButtonLookAndFeel::get());
+    minus12Button.onClick = [this](){
+        audioProcessor.gainParam->setValueNotifyingHost(audioProcessor.gainParam->convertTo0to1(-12.0f));
+    };
+    addAndMakeVisible(minus12Button);
+
+//    channelsPicker.setBounds(0, 0, 100, 30);
+//    addAndMakeVisible(channelsPicker);
+
     addAndMakeVisible(tooltips);
 
     setOpaque(true);
@@ -87,6 +114,14 @@ void AudioProcessorEditor::resized()
     int y = 50;
     gainKnob.setTopLeftPosition(x, y);
 
+    float y1 = y + 30;
+    x += gainKnob.getWidth() + 20;
+    minus6Button.setTopLeftPosition(x, y1);
+
+    y1 += minus6Button.getHeight() + 2;
+    minus12Button.setTopLeftPosition(x, y1);
+
+    x = 20;
     y += gainKnob.getHeight() + 20;
     invertLeftButton.setTopLeftPosition(x, y);
 
@@ -95,6 +130,10 @@ void AudioProcessorEditor::resized()
 
     x += invertRightButton.getWidth() + 2;
     swapChannelsButton.setTopLeftPosition(x, y);
+
+//    x = 20;
+//    y += swapChannelsButton.getHeight() + 20;
+//    channelsPicker.setTopLeftPosition(x, y);
 
     x = bounds.getRight() - bypassButton.getWidth() - 10;
     y = 11;

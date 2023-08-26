@@ -11,6 +11,7 @@ namespace ParameterID
     PARAMETER_ID(invertLeft)
     PARAMETER_ID(invertRight)
     PARAMETER_ID(swapChannels)
+    PARAMETER_ID(channels)
 
     #undef PARAMETER_ID
 }
@@ -47,6 +48,8 @@ public:
 
     juce::AudioProcessorValueTreeState apvts { *this, nullptr, "Parameters", createParameterLayout() };
 
+    juce::AudioParameterFloat* gainParam;
+
 private:
     juce::AudioProcessorValueTreeState::ParameterLayout createParameterLayout();
 
@@ -54,10 +57,10 @@ private:
     void smoothen() noexcept;
 
     juce::AudioParameterBool* bypassParam;
-    juce::AudioParameterFloat* gainParam;
     juce::AudioParameterBool* invertLeftParam;
     juce::AudioParameterBool* invertRightParam;
     juce::AudioParameterBool* swapChannelsParam;
+    juce::AudioParameterChoice* channelsParam;
 
     juce::LinearSmoothedValue<float> gainSmoother;
 
@@ -66,6 +69,7 @@ private:
     bool invertRight;
     bool swapChannels;
     float gain;
+    int channels;
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(AudioProcessor)
 };
