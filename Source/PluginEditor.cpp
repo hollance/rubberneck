@@ -5,25 +5,15 @@
 AudioProcessorEditor::AudioProcessorEditor(AudioProcessor& p)
     : juce::AudioProcessorEditor(&p), audioProcessor(p)
 {
-    widthKnob.setLabel("Width");
-    widthKnob.slider.setDescription("Amount of widening to add");
-    widthKnob.slider.setHelpText(widthKnob.slider.getDescription());
-    widthKnob.slider.setTooltip(widthKnob.slider.getHelpText());
-    widthKnob.slider.setLookAndFeel(RotaryKnobLookAndFeel::get());
-    widthKnob.setColor(Colors::Knob::label);
-    widthKnob.setFont(Fonts::getFont());
-    widthKnob.setExplicitFocusOrder(0);
-    addAndMakeVisible(widthKnob);
-
-    crossoverKnob.setLabel("Crossover");
-    crossoverKnob.slider.setDescription("Sounds above crossover frequency are widened");
-    crossoverKnob.slider.setHelpText(crossoverKnob.slider.getDescription());
-    crossoverKnob.slider.setTooltip(crossoverKnob.slider.getHelpText());
-    crossoverKnob.slider.setLookAndFeel(RotaryKnobLookAndFeel::get());
-    crossoverKnob.setColor(Colors::Knob::label);
-    crossoverKnob.setFont(Fonts::getFont());
-    crossoverKnob.setExplicitFocusOrder(1);
-    addAndMakeVisible(crossoverKnob);
+    gainKnob.setLabel("Gain");
+    gainKnob.slider.setDescription("Output level adjustment");
+    gainKnob.slider.setHelpText(gainKnob.slider.getDescription());
+    gainKnob.slider.setTooltip(gainKnob.slider.getHelpText());
+    gainKnob.slider.setLookAndFeel(RotaryKnobLookAndFeel::get());
+    gainKnob.setColor(Colors::Knob::label);
+    gainKnob.setFont(Fonts::getFont());
+    gainKnob.setExplicitFocusOrder(0);
+    addAndMakeVisible(gainKnob);
 
     bypassButton.setTitle("Bypass");
     bypassButton.setDescription("Bypass the effect");
@@ -36,21 +26,21 @@ AudioProcessorEditor::AudioProcessorEditor(AudioProcessor& p)
     bypassButton.setExplicitFocusOrder(2);
     addAndMakeVisible(bypassButton);
 
-    monoButton.setTitle("Mono");
-    monoButton.setDescription("Audition the sound as mono");
-    monoButton.setHelpText(monoButton.getDescription());
-    monoButton.setTooltip(monoButton.getHelpText());
-    monoButton.setButtonText("Mono");
-    monoButton.setClickingTogglesState(true);
-    monoButton.setBounds(0, 0, 50, 18);
-    monoButton.setLookAndFeel(ButtonLookAndFeel::get());
-    monoButton.setExplicitFocusOrder(3);
-    addAndMakeVisible(monoButton);
+//    monoButton.setTitle("Mono");
+//    monoButton.setDescription("Audition the sound as mono");
+//    monoButton.setHelpText(monoButton.getDescription());
+//    monoButton.setTooltip(monoButton.getHelpText());
+//    monoButton.setButtonText("Mono");
+//    monoButton.setClickingTogglesState(true);
+//    monoButton.setBounds(0, 0, 50, 18);
+//    monoButton.setLookAndFeel(ButtonLookAndFeel::get());
+//    monoButton.setExplicitFocusOrder(3);
+//    addAndMakeVisible(monoButton);
 
     addAndMakeVisible(tooltips);
 
     setOpaque(true);
-    setSize(320, 240);
+    setSize(600, 400);
 }
 
 AudioProcessorEditor::~AudioProcessorEditor()
@@ -75,19 +65,19 @@ void AudioProcessorEditor::resized()
 {
     const auto bounds = getLocalBounds();
 
-    int x = 50;
-    int y = 72;
-    crossoverKnob.setTopLeftPosition(x, y);
+    int x = 20;
+    int y = 50;
+    gainKnob.setTopLeftPosition(x, y);
 
-    x += crossoverKnob.getWidth() + 60;
-    widthKnob.setTopLeftPosition(x, y);
+//    x += crossoverKnob.getWidth() + 60;
+//    widthKnob.setTopLeftPosition(x, y);
 
     x = bounds.getRight() - bypassButton.getWidth() - 10;
     y = 11;
     bypassButton.setTopLeftPosition(x, y);
 
-    x -= monoButton.getWidth() + 10;
-    monoButton.setTopLeftPosition(x, y);
+//    x -= monoButton.getWidth() + 10;
+//    monoButton.setTopLeftPosition(x, y);
 
     tooltips.setBounds(bounds.withY(bounds.getBottom() - 20).withHeight(20));
 }

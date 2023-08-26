@@ -1,16 +1,13 @@
 #pragma once
 
 #include <JuceHeader.h>
-#include "LinkwitzRileyCrossover.h"
 
 namespace ParameterID
 {
     #define PARAMETER_ID(str) const juce::ParameterID str(#str, 1);
 
     PARAMETER_ID(bypass)
-    PARAMETER_ID(crossover)
-    PARAMETER_ID(width)
-    PARAMETER_ID(audition)
+    PARAMETER_ID(gain)
 
     #undef PARAMETER_ID
 }
@@ -54,17 +51,13 @@ private:
     void smoothen() noexcept;
 
     juce::AudioParameterBool* bypassParam;
-    juce::AudioParameterFloat* crossoverParam;
-    juce::AudioParameterFloat* widthParam;
-    juce::AudioParameterBool* auditionParam;
+    juce::AudioParameterFloat* gainParam;
+//    juce::AudioParameterBool* auditionParam;
 
-    juce::LinearSmoothedValue<float> crossoverSmoother;
-    juce::LinearSmoothedValue<float> widthSmoother;
+    juce::LinearSmoothedValue<float> gainSmoother;
 
     bool bypassed;
-    bool audition;
-    float crossover, lastCrossover;
-    float width;
+    float gain;
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(AudioProcessor)
 };

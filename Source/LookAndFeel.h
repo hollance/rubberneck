@@ -10,7 +10,7 @@ namespace Colors
     namespace Knob
     {
         const juce::Colour trackBackground { 205, 200, 195 };
-        const juce::Colour trackActive { 50, 200, 220 };
+        const juce::Colour trackActive { 248, 160, 88 };
         const juce::Colour trackFromCenter { 213, 116, 212 };
         const juce::Colour outline { 255, 250, 245 };
         const juce::Colour gradientTop { 250, 245, 240 };

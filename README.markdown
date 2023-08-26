@@ -2,12 +2,7 @@
 
 -	SIMD
 -	with LNF
--	gain
--	bypass button
--	phase invert L + R
--	flip L & R
--	mono output (+ sides only mode)  [all | mids | sides]
--	HPF-LPF (disabled if at 0 or nyquist)
+
 -	VUMeter (fun!)
 -	protectYourEars built into this
   -	with a button to turn it off
@@ -22,4 +17,9 @@
   -	Mono vs Stereo mode
   -	Display block size (tally of which ones and how often); histogram?
   -	Current DC offset
--	Works on mono+stereo tracks
+
+-	HPF-LPF (disabled if at 0 or nyquist)
+- -6 dB and -12 dB buttons (0.5 and 0.25) to change the gain parameter
+-	phase invert L + R
+-	flip L & R
+-	mono output (+ sides only mode)  [all | mids | sides]

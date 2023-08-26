@@ -22,24 +22,20 @@ private:
 
     AudioProcessor& audioProcessor;
 
-    RotaryKnob crossoverKnob;
-    RotaryKnob widthKnob;
+    RotaryKnob gainKnob;
     juce::TextButton bypassButton;
-    juce::TextButton monoButton;
+//    juce::TextButton monoButton;
     TooltipViewer tooltips;
 
-    SliderAttachment crossoverAttachment {
-        audioProcessor.apvts, ParameterID::crossover.getParamID(), crossoverKnob.slider
-    };
-    SliderAttachment widthAttachment {
-        audioProcessor.apvts, ParameterID::width.getParamID(), widthKnob.slider
+    SliderAttachment gainAttachment {
+        audioProcessor.apvts, ParameterID::gain.getParamID(), gainKnob.slider
     };
     ButtonAttachment bypassAttachment {
         audioProcessor.apvts, ParameterID::bypass.getParamID(), bypassButton
     };
-    ButtonAttachment monoAttachment {
-        audioProcessor.apvts, ParameterID::audition.getParamID(), monoButton
-    };
+//    ButtonAttachment monoAttachment {
+//        audioProcessor.apvts, ParameterID::audition.getParamID(), monoButton
+//    };
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(AudioProcessorEditor)
 };
