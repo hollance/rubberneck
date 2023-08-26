@@ -40,6 +40,13 @@ namespace Colors
         const juce::Colour gradientTopToggled { 248, 160, 88 };
         const juce::Colour gradientBottomToggled  { 255, 195, 140 };
     };
+
+    namespace RoundButton
+    {
+        const juce::Colour background { 100, 100, 100 };
+        const juce::Colour backgroundPressed { 80, 80, 80 };
+        const juce::Colour text { 240, 240, 240 };
+    };
 };
 
 class Fonts
@@ -132,4 +139,27 @@ private:
     juce::DropShadow dropShadow;
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(ButtonLookAndFeel)
+};
+
+class RoundButtonLookAndFeel : public juce::LookAndFeel_V4
+{
+public:
+    RoundButtonLookAndFeel();
+
+    static RoundButtonLookAndFeel* get()
+    {
+        static RoundButtonLookAndFeel instance;
+        return &instance;
+    }
+
+    void drawButtonBackground(juce::Graphics& g, juce::Button& button,
+                              const juce::Colour& backgroundColour,
+                              bool shouldDrawButtonAsHighlighted,
+                              bool shouldDrawButtonAsDown) override;
+
+    void drawButtonText(juce::Graphics& g, juce::TextButton& button,
+                        bool shouldDrawButtonAsHighlighted,
+                        bool shouldDrawButtonAsDown) override;
+private:
+    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(RoundButtonLookAndFeel)
 };

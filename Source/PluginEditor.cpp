@@ -59,9 +59,9 @@ AudioProcessorEditor::AudioProcessorEditor(AudioProcessor& p)
     minus6Button.setDescription("Set the gain to -6 dB");
     minus6Button.setHelpText(minus6Button.getDescription());
     minus6Button.setTooltip(minus6Button.getHelpText());
-    minus6Button.setButtonText("-6 dB");
-    minus6Button.setBounds(0, 0, 60, 30);
-    minus6Button.setLookAndFeel(ButtonLookAndFeel::get());
+    minus6Button.setButtonText("6");
+    minus6Button.setBounds(0, 0, 20, 20);
+    minus6Button.setLookAndFeel(RoundButtonLookAndFeel::get());
     minus6Button.onClick = [this](){
         audioProcessor.gainParam->setValueNotifyingHost(audioProcessor.gainParam->convertTo0to1(-6.0f));
     };
@@ -71,9 +71,9 @@ AudioProcessorEditor::AudioProcessorEditor(AudioProcessor& p)
     minus12Button.setDescription("Set the gain to -12 dB");
     minus12Button.setHelpText(minus12Button.getDescription());
     minus12Button.setTooltip(minus12Button.getHelpText());
-    minus12Button.setButtonText("-12 dB");
-    minus12Button.setBounds(0, 0, 60, 30);
-    minus12Button.setLookAndFeel(ButtonLookAndFeel::get());
+    minus12Button.setButtonText("12");
+    minus12Button.setBounds(0, 0, 20, 20);
+    minus12Button.setLookAndFeel(RoundButtonLookAndFeel::get());
     minus12Button.onClick = [this](){
         audioProcessor.gainParam->setValueNotifyingHost(audioProcessor.gainParam->convertTo0to1(-12.0f));
     };
@@ -110,12 +110,12 @@ void AudioProcessorEditor::resized()
 {
     const auto bounds = getLocalBounds();
 
-    int x = 20;
+    int x = 50;
     int y = 50;
     gainKnob.setTopLeftPosition(x, y);
 
-    float y1 = y + 30;
-    x += gainKnob.getWidth() + 20;
+    float y1 = y + 40; //gainKnob.getBottom() - 40;
+    x = 15;
     minus6Button.setTopLeftPosition(x, y1);
 
     y1 += minus6Button.getHeight() + 2;

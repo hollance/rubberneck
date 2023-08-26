@@ -21,6 +21,7 @@
 -	protectYourEars built into this
   -	with a button to turn it off
   -	with warning light in the UI (green = OK, orange = clipping, red = killed the sound)
+    - put this on top of the analysis section; Clear button to clear it
 
 -	mono output (+ sides only mode)  [all | mids | sides]
   - see StereoOMG for styling of this control / custom control

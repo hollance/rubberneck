@@ -350,3 +350,34 @@ void ButtonLookAndFeel::drawButtonText(
 }
 
 // =============================================================================
+
+RoundButtonLookAndFeel::RoundButtonLookAndFeel()
+{
+    setColour(juce::TextButton::buttonColourId, Colors::RoundButton::background);
+    setColour(juce::TextButton::textColourOffId, Colors::RoundButton::text);
+}
+
+void RoundButtonLookAndFeel::drawButtonBackground(
+    juce::Graphics &g, juce::Button& button, const juce::Colour &backgroundColour,
+    [[maybe_unused]] bool shouldDrawButtonAsHighlighted, bool shouldDrawButtonAsDown)
+{
+    auto bounds = button.getLocalBounds().toFloat();
+    if (shouldDrawButtonAsDown) {
+        g.setColour(Colors::RoundButton::backgroundPressed);
+    } else {
+        g.setColour(backgroundColour);
+    }
+    g.fillEllipse(bounds);
+}
+
+void RoundButtonLookAndFeel::drawButtonText(
+    juce::Graphics &g, juce::TextButton &button,
+    [[maybe_unused]] bool shouldDrawButtonAsHighlighted, bool shouldDrawButtonAsDown)
+{
+    auto bounds = button.getLocalBounds().toFloat();
+    g.setFont(Fonts::getFont(12.0f));
+    g.setColour(button.findColour(juce::TextButton::textColourOffId));
+    g.drawText(button.getButtonText(), bounds, juce::Justification::centred);
+}
+
+// =============================================================================
