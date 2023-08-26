@@ -23,15 +23,22 @@ namespace Colors
         const juce::Colour caret { 255, 255, 255 };
     };
 
+    namespace BarButton
+    {
+        const juce::Colour background { 248, 160, 88 };
+        const juce::Colour backgroundToggled { 255, 255, 255 };
+        const juce::Colour borderToggled { 255, 255, 255 };
+        const juce::Colour border { 255, 255, 255 };
+        const juce::Colour text { 255, 255, 255 };
+        const juce::Colour textToggled { 248, 160, 88 };
+    };
+
     namespace Button
     {
-        const juce::Colour background { 245, 240, 235 };
-        const juce::Colour backgroundToggled { 40, 120, 140 };
-        const juce::Colour border { 40, 120, 140 };
-        const juce::Colour borderPressed { 25, 80, 95 };
-        const juce::Colour text { 25, 80, 95 };
+        const juce::Colour text { 80, 80, 80 };
         const juce::Colour textToggled { 255, 255, 255 };
-        const juce::Colour textPressed { 10, 35, 40 };
+        const juce::Colour gradientTopToggled { 248, 160, 88 };
+        const juce::Colour gradientBottomToggled  { 255, 195, 140 };
     };
 };
 
@@ -79,6 +86,29 @@ private:
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(RotaryKnobLookAndFeel)
 };
 
+class BarButtonLookAndFeel : public juce::LookAndFeel_V4
+{
+public:
+    BarButtonLookAndFeel();
+
+    static BarButtonLookAndFeel* get()
+    {
+        static BarButtonLookAndFeel instance;
+        return &instance;
+    }
+
+    void drawButtonBackground(juce::Graphics& g, juce::Button& button,
+                              const juce::Colour& backgroundColour,
+                              bool shouldDrawButtonAsHighlighted,
+                              bool shouldDrawButtonAsDown) override;
+
+    void drawButtonText(juce::Graphics& g, juce::TextButton& button,
+                        bool shouldDrawButtonAsHighlighted,
+                        bool shouldDrawButtonAsDown) override;
+private:
+    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(BarButtonLookAndFeel)
+};
+
 class ButtonLookAndFeel : public juce::LookAndFeel_V4
 {
 public:
@@ -99,5 +129,7 @@ public:
                         bool shouldDrawButtonAsHighlighted,
                         bool shouldDrawButtonAsDown) override;
 private:
+    juce::DropShadow dropShadow;
+
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(ButtonLookAndFeel)
 };

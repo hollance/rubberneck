@@ -8,6 +8,9 @@ namespace ParameterID
 
     PARAMETER_ID(bypass)
     PARAMETER_ID(gain)
+    PARAMETER_ID(invertLeft)
+    PARAMETER_ID(invertRight)
+    PARAMETER_ID(swapChannels)
 
     #undef PARAMETER_ID
 }
@@ -52,11 +55,16 @@ private:
 
     juce::AudioParameterBool* bypassParam;
     juce::AudioParameterFloat* gainParam;
-//    juce::AudioParameterBool* auditionParam;
+    juce::AudioParameterBool* invertLeftParam;
+    juce::AudioParameterBool* invertRightParam;
+    juce::AudioParameterBool* swapChannelsParam;
 
     juce::LinearSmoothedValue<float> gainSmoother;
 
     bool bypassed;
+    bool invertLeft;
+    bool invertRight;
+    bool swapChannels;
     float gain;
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(AudioProcessor)

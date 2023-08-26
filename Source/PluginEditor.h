@@ -24,7 +24,9 @@ private:
 
     RotaryKnob gainKnob;
     juce::TextButton bypassButton;
-//    juce::TextButton monoButton;
+    juce::TextButton invertLeftButton;
+    juce::TextButton invertRightButton;
+    juce::TextButton swapChannelsButton;
     TooltipViewer tooltips;
 
     SliderAttachment gainAttachment {
@@ -33,9 +35,15 @@ private:
     ButtonAttachment bypassAttachment {
         audioProcessor.apvts, ParameterID::bypass.getParamID(), bypassButton
     };
-//    ButtonAttachment monoAttachment {
-//        audioProcessor.apvts, ParameterID::audition.getParamID(), monoButton
-//    };
+    ButtonAttachment invertLeftAttachment {
+        audioProcessor.apvts, ParameterID::invertLeft.getParamID(), invertLeftButton
+    };
+    ButtonAttachment invertRightAttachment {
+        audioProcessor.apvts, ParameterID::invertRight.getParamID(), invertRightButton
+    };
+    ButtonAttachment swapChannelsAttachment {
+        audioProcessor.apvts, ParameterID::swapChannels.getParamID(), swapChannelsButton
+    };
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(AudioProcessorEditor)
 };

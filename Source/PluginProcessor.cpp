@@ -9,31 +9,6 @@ static juce::String stringFromDecibels(float value, int)
     return juce::String(value, 1) + " dB";
 }
 
-//static juce::String stringFromPercent(float value, int)
-//{
-//    return juce::String(int(value)) + " %";
-//}
-//
-//static juce::String stringFromHz(float value, int)
-//{
-//    if (value < 100.0f) {
-//        return juce::String(value, 1) + " Hz";
-//    } else if (value < 1000.0f) {
-//        return juce::String(int(value)) + " Hz";
-//    } else {
-//        return juce::String(value / 1000.0f, 2) + " k";
-//    }
-//}
-//
-//static float hzFromString(const juce::String& str)
-//{
-//    float value = str.getFloatValue();
-//    if (value > 0.0f && value < 10.0f) {  // kHz
-//        value *= 1000.0f;
-//    }
-//    return value;
-//}
-
 AudioProcessor::AudioProcessor() :
     juce::AudioProcessor(
         BusesProperties()
@@ -43,6 +18,9 @@ AudioProcessor::AudioProcessor() :
 {
     castParameter(apvts, ParameterID::bypass, bypassParam);
     castParameter(apvts, ParameterID::gain, gainParam);
+    castParameter(apvts, ParameterID::invertLeft, invertLeftParam);
+    castParameter(apvts, ParameterID::invertRight, invertRightParam);
+    castParameter(apvts, ParameterID::swapChannels, swapChannelsParam);
 }
 
 AudioProcessor::~AudioProcessor()
@@ -65,6 +43,21 @@ juce::AudioProcessorValueTreeState::ParameterLayout AudioProcessor::createParame
         0.0f,
         juce::AudioParameterFloatAttributes()
             .withStringFromValueFunction(stringFromDecibels)));
+
+    layout.add(std::make_unique<juce::AudioParameterBool>(
+        ParameterID::invertLeft,
+        "Phase Invert Left",
+        false));
+
+    layout.add(std::make_unique<juce::AudioParameterBool>(
+        ParameterID::invertRight,
+        "Phase Invert Right",
+        false));
+
+    layout.add(std::make_unique<juce::AudioParameterBool>(
+        ParameterID::swapChannels,
+        "Swap Left and Right",
+        false));
 
     return layout;
 }
@@ -99,6 +92,9 @@ void AudioProcessor::update() noexcept
 {
     bypassed = bypassParam->get();
     gainSmoother.setCurrentAndTargetValue(decibelsToGain(gainParam->get()));
+    invertLeft = invertLeftParam->get();
+    invertRight = invertRightParam->get();
+    swapChannels = swapChannelsParam->get();
 }
 
 void AudioProcessor::smoothen() noexcept
@@ -135,6 +131,16 @@ void AudioProcessor::processBlock(
 
         sampleL *= gain;
         sampleR *= gain;
+
+        if (invertLeft) {
+            sampleL = -sampleL;
+        }
+        if (invertRight) {
+            sampleR = -sampleR;
+        }
+        if (swapChannels) {
+            std::swap(sampleL, sampleR);
+        }
 
         float M = (sampleL + sampleR) * 0.5f;
         float S = (sampleL - sampleR) * 0.5f;

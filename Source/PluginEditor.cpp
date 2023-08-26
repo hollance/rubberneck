@@ -21,21 +21,39 @@ AudioProcessorEditor::AudioProcessorEditor(AudioProcessor& p)
     bypassButton.setTooltip(bypassButton.getHelpText());
     bypassButton.setButtonText("Bypass");
     bypassButton.setClickingTogglesState(true);
-    bypassButton.setBounds(0, 0, 50, 18);
-    bypassButton.setLookAndFeel(ButtonLookAndFeel::get());
-    bypassButton.setExplicitFocusOrder(2);
+    bypassButton.setBounds(0, 0, 50, 19);
+    bypassButton.setLookAndFeel(BarButtonLookAndFeel::get());
     addAndMakeVisible(bypassButton);
 
-//    monoButton.setTitle("Mono");
-//    monoButton.setDescription("Audition the sound as mono");
-//    monoButton.setHelpText(monoButton.getDescription());
-//    monoButton.setTooltip(monoButton.getHelpText());
-//    monoButton.setButtonText("Mono");
-//    monoButton.setClickingTogglesState(true);
-//    monoButton.setBounds(0, 0, 50, 18);
-//    monoButton.setLookAndFeel(ButtonLookAndFeel::get());
-//    monoButton.setExplicitFocusOrder(3);
-//    addAndMakeVisible(monoButton);
+    invertLeftButton.setTitle("Phase invert left");
+    invertLeftButton.setDescription("Invert the phase of the left output channel");
+    invertLeftButton.setHelpText(invertLeftButton.getDescription());
+    invertLeftButton.setTooltip(invertLeftButton.getHelpText());
+    invertLeftButton.setButtonText(juce::CharPointer_UTF8("ΦL"));
+    invertLeftButton.setClickingTogglesState(true);
+    invertLeftButton.setBounds(0, 0, 40, 30);
+    invertLeftButton.setLookAndFeel(ButtonLookAndFeel::get());
+    addAndMakeVisible(invertLeftButton);
+
+    invertRightButton.setTitle("Phase invert right");
+    invertRightButton.setDescription("Invert the phase of the right output channel");
+    invertRightButton.setHelpText(invertRightButton.getDescription());
+    invertRightButton.setTooltip(invertRightButton.getHelpText());
+    invertRightButton.setButtonText(juce::CharPointer_UTF8("ΦR"));
+    invertRightButton.setClickingTogglesState(true);
+    invertRightButton.setBounds(0, 0, 40, 30);
+    invertRightButton.setLookAndFeel(ButtonLookAndFeel::get());
+    addAndMakeVisible(invertRightButton);
+
+    swapChannelsButton.setTitle("Swap channels");
+    swapChannelsButton.setDescription("Swap the left and right output channels");
+    swapChannelsButton.setHelpText(swapChannelsButton.getDescription());
+    swapChannelsButton.setTooltip(swapChannelsButton.getHelpText());
+    swapChannelsButton.setButtonText(juce::CharPointer_UTF8("L←→R"));
+    swapChannelsButton.setClickingTogglesState(true);
+    swapChannelsButton.setBounds(0, 0, 50, 30);
+    swapChannelsButton.setLookAndFeel(ButtonLookAndFeel::get());
+    addAndMakeVisible(swapChannelsButton);
 
     addAndMakeVisible(tooltips);
 
@@ -69,15 +87,18 @@ void AudioProcessorEditor::resized()
     int y = 50;
     gainKnob.setTopLeftPosition(x, y);
 
-//    x += crossoverKnob.getWidth() + 60;
-//    widthKnob.setTopLeftPosition(x, y);
+    y += gainKnob.getHeight() + 20;
+    invertLeftButton.setTopLeftPosition(x, y);
+
+    x += invertLeftButton.getWidth() + 2;
+    invertRightButton.setTopLeftPosition(x, y);
+
+    x += invertRightButton.getWidth() + 2;
+    swapChannelsButton.setTopLeftPosition(x, y);
 
     x = bounds.getRight() - bypassButton.getWidth() - 10;
     y = 11;
     bypassButton.setTopLeftPosition(x, y);
-
-//    x -= monoButton.getWidth() + 10;
-//    monoButton.setTopLeftPosition(x, y);
 
     tooltips.setBounds(bounds.withY(bounds.getBottom() - 20).withHeight(20));
 }
