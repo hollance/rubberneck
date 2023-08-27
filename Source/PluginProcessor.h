@@ -13,6 +13,8 @@ namespace ParameterID
     PARAMETER_ID(swapChannels)
     PARAMETER_ID(channels)
     PARAMETER_ID(protectYourEars)
+    PARAMETER_ID(lowCut)
+    PARAMETER_ID(highCut)
 
     #undef PARAMETER_ID
 }
@@ -51,6 +53,8 @@ public:
 
     juce::AudioParameterFloat* gainParam;
     juce::AudioParameterChoice* channelsParam;
+    juce::AudioParameterFloat* lowCutParam;
+    juce::AudioParameterFloat* highCutParam;
 
 private:
     juce::AudioProcessorValueTreeState::ParameterLayout createParameterLayout();
@@ -65,6 +69,8 @@ private:
     juce::AudioParameterBool* protectYourEarsParam;
 
     juce::LinearSmoothedValue<float> gainSmoother;
+    juce::LinearSmoothedValue<float> lowCutSmoother;
+    juce::LinearSmoothedValue<float> highCutSmoother;
 
     bool bypassed;
     bool invertLeft;
@@ -72,6 +78,8 @@ private:
     bool swapChannels;
     bool protectYourEars;
     float gain;
+    float lowCut;
+    float highCut;
     int channels;
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(AudioProcessor)

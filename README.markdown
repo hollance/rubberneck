@@ -10,15 +10,16 @@
   -	True peak?
   -	LUFS?
   -	button to Clear measurements
-  -	Display sample rate
-  -	Mono vs Stereo mode
-  -	Display block size (tally of which ones and how often); histogram?
   -	Current DC offset
-
--	HPF-LPF (disabled if at 0 or nyquist)
-  - just with two smaller knobs for now
+  -	Display sample rate
+  -	Channels in: N out: M
+  -	Display block size (tally of which ones and how often); histogram?
 
 -	protectYourEars built into this
   -	with a button to turn it off
   -	with warning light in the UI (green = OK, orange = clipping, red = killed the sound)
     - put this on top of the analysis section; Clear button to clear it
+
+-	HPF-LPF (disabled if at 0 or nyquist)
+  - TODO: if the string ends in "k" or "kHz", then value *= 1000.0f;
+  - Cytomic SVF

@@ -2,19 +2,28 @@
 
 static constexpr float pi = juce::MathConstants<float>::pi;
 
-static constexpr int captionH = 22;
-static constexpr int textBoxH = 16;
-static constexpr int sliderW = 80;
-static constexpr int sliderH = sliderW;
+//static constexpr int captionH = 22;
+//static constexpr int textBoxH = 16;
+//static constexpr int sliderW = 80;
+//static constexpr int sliderH = sliderW;
 
 RotaryKnob::RotaryKnob()
 {
+    setSizes(80, 22, 16);
     slider.setSliderStyle(juce::Slider::SliderStyle::RotaryHorizontalVerticalDrag);
-    slider.setTextBoxStyle(juce::Slider::TextBoxBelow, false, sliderW, textBoxH);
     slider.setRotaryParameters(1.25f * pi, 2.75f * pi, true);
     addAndMakeVisible(slider);
+}
 
-    setBounds(0, 0, sliderW, captionH + sliderH + textBoxH);
+void RotaryKnob::setSizes(int newKnobWidth, int newCaptionHeight, int newTextBoxHeight)
+{
+    knobWidth = newKnobWidth;
+    knobHeight = newKnobWidth;
+    captionHeight = newCaptionHeight;
+    textBoxHeight = newTextBoxHeight;
+
+    slider.setTextBoxStyle(juce::Slider::TextBoxBelow, false, knobWidth, textBoxHeight);
+    setBounds(0, 0, knobWidth, captionHeight + knobHeight + textBoxHeight);
 }
 
 void RotaryKnob::setLabel(const juce::String& newLabel)
@@ -37,10 +46,10 @@ void RotaryKnob::paint(juce::Graphics& g)
 {
     g.setFont(font);
     g.setColour(color);
-    g.drawText(label, juce::Rectangle<int>{ 0, 2, sliderW, captionH }, juce::Justification::centredTop);
+    g.drawText(label, juce::Rectangle<int>{ 0, 2, knobWidth, captionHeight }, juce::Justification::centredTop);
 }
 
 void RotaryKnob::resized()
 {
-    slider.setBounds(0, captionH, sliderW, sliderH + textBoxH);
+    slider.setBounds(0, captionHeight, knobWidth, knobHeight + textBoxHeight);
 }

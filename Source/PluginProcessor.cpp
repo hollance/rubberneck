@@ -2,11 +2,30 @@
 #include "PluginEditor.h"
 #include "DSP.h"
 #include "JuceUtils.h"
-//#include "ProtectYourEars.h"  //TODO: remove this file from project
 
 static juce::String stringFromDecibels(float value, int)
 {
     return juce::String(value, 1) + " dB";
+}
+
+static juce::String stringFromHz(float value)
+{
+    if (value < 1000.0f) {
+        return juce::String(int(value)) + " Hz";
+    } else if (value < 10000.0f) {
+        return juce::String(value / 1000.0f, 2) + " k";
+    } else {
+        return juce::String(value / 1000.0f, 1) + " k";
+    }
+}
+
+static float hzFromString(const juce::String& str)
+{
+    float value = str.getFloatValue();
+    // TODO: maybe if 0, then figure out if actually zero or input error
+
+    // TODO: if the string ends in "k" or "kHz", then value *= 1000.0f;
+    return value;
 }
 
 AudioProcessor::AudioProcessor() :
@@ -23,6 +42,8 @@ AudioProcessor::AudioProcessor() :
     castParameter(apvts, ParameterID::swapChannels, swapChannelsParam);
     castParameter(apvts, ParameterID::channels, channelsParam);
     castParameter(apvts, ParameterID::protectYourEars, protectYourEarsParam);
+    castParameter(apvts, ParameterID::lowCut, lowCutParam);
+    castParameter(apvts, ParameterID::highCut, highCutParam);
 }
 
 AudioProcessor::~AudioProcessor()
@@ -72,12 +93,61 @@ juce::AudioProcessorValueTreeState::ParameterLayout AudioProcessor::createParame
         "Protect Your Ears",
         true));
 
+    auto lowCutStringFromValue = [](float value, int)
+    {
+        if (value <= 0.0f) { return juce::String("off"); }
+        return stringFromHz(value);
+    };
+
+    auto lowCutValueFromString = [](const juce::String& str)
+    {
+        if (str.isEmpty() || str.toLowerCase() == "off") { return 0.0f; }
+        return hzFromString(str);
+    };
+
+    layout.add(std::make_unique<juce::AudioParameterFloat>(
+        ParameterID::lowCut,
+        "Low Cut",
+        juce::NormalisableRange<float>(0.0f, 24000.0f, 1.0f, 0.3f),
+        0.0f,
+        juce::AudioParameterFloatAttributes()
+            .withStringFromValueFunction(lowCutStringFromValue)
+            .withValueFromStringFunction(lowCutValueFromString)));
+
+    auto highCutStringFromValue = [](float value, int)
+    {
+        if (value >= 24000.0f) { return juce::String("off"); }
+        return stringFromHz(value);
+    };
+
+    auto highCutValueFromString = [](const juce::String& str)
+    {
+//ptr = str.getCharPointer();
+//float value = float(CharacterFunctions::readDoubleValue(ptr));
+//  this advances ptr, so maybe I can use this to figure out if it was a proper number
+
+//TODO: really should be anything that's not a number
+        if (str.isEmpty() || str.toLowerCase() == "off") { return 24000.0f; }
+        return hzFromString(str);
+    };
+
+    layout.add(std::make_unique<juce::AudioParameterFloat>(
+        ParameterID::highCut,
+        "High Cut",
+        juce::NormalisableRange<float>(0.0f, 24000.0f, 1.0f, 0.3f),
+        24000.0f,
+        juce::AudioParameterFloatAttributes()
+            .withStringFromValueFunction(highCutStringFromValue)
+            .withValueFromStringFunction(highCutValueFromString)));
+
     return layout;
 }
 
 void AudioProcessor::prepareToPlay(double sampleRate, [[maybe_unused]] int samplesPerBlock)
 {
     gainSmoother.reset(sampleRate, 0.02);
+    lowCutSmoother.reset(sampleRate, 0.02);
+    highCutSmoother.reset(sampleRate, 0.02);
     reset();
 }
 
@@ -87,8 +157,9 @@ void AudioProcessor::releaseResources()
 
 void AudioProcessor::reset()
 {
-    gain = decibelsToGain(gainParam->get());
-    gainSmoother.setCurrentAndTargetValue(gain);
+    gainSmoother.setCurrentAndTargetValue(decibelsToGain(gainParam->get()));
+    lowCutSmoother.setCurrentAndTargetValue(lowCutParam->get());
+    highCutSmoother.setCurrentAndTargetValue(highCutParam->get());
 }
 
 juce::AudioProcessorParameter* AudioProcessor::getBypassParameter() const
@@ -104,17 +175,22 @@ bool AudioProcessor::isBusesLayoutSupported(const BusesLayout& layouts) const
 void AudioProcessor::update() noexcept
 {
     bypassed = bypassParam->get();
-    gainSmoother.setTargetValue(decibelsToGain(gainParam->get()));
     invertLeft = invertLeftParam->get();
     invertRight = invertRightParam->get();
     swapChannels = swapChannelsParam->get();
     channels = channelsParam->getIndex();
     protectYourEars = protectYourEarsParam->get();
+
+    gainSmoother.setTargetValue(decibelsToGain(gainParam->get()));
+    lowCutSmoother.setTargetValue(lowCutParam->get());
+    highCutSmoother.setTargetValue(highCutParam->get());
 }
 
 void AudioProcessor::smoothen() noexcept
 {
     gain = gainSmoother.getNextValue();
+    lowCut = lowCutSmoother.getNextValue();
+    highCut = highCutSmoother.getNextValue();
 }
 
 void AudioProcessor::processBlock(
@@ -157,6 +233,9 @@ void AudioProcessor::processBlock(
             std::swap(sampleL, sampleR);
         }
 
+        // TODO: recompute filter coefficients if needed
+        // TODO: low cut + high cut
+
         if (channels == 1) {
             float M = (sampleL + sampleR) * 0.5f;
             sampleL = sampleR = M;
@@ -165,15 +244,52 @@ void AudioProcessor::processBlock(
             sampleL = sampleR = S;
         }
 
-//TODO protectyourears
-
         channelL[sample] = sampleL;
         channelR[sample] = sampleR;
     }
 
-//TODO: remove
-//    protectYourEars(channelL, numSamples);
-//    protectYourEars(channelR, numSamples);
+    // TODO: this also measures the highest peak (but ignore nan and inf)
+//TODO protectyourears (do this in a loop on both channels)
+/*
+    bool firstWarning = true;
+    for (int i = 0; i < sampleCount; ++i) {
+        float x = buffer[i];
+        bool silence = false;
+        if (std::isnan(x)) {
+            DBG("!!! WARNING: nan detected in audio buffer, silencing !!!");
+            silence = true;
+        } else if (std::isinf(x)) {
+            DBG("!!! WARNING: inf detected in audio buffer, silencing !!!");
+            silence = true;
+        } else if (x < -2.0f || x > 2.0f) {  // screaming feedback
+            DBG("!!! WARNING: sample out of range, silencing !!!");
+            silence = true;
+        } else if (x < -1.0f) {
+            if (firstWarning) {
+                DBG("!!! WARNING: sample out of range !!!");
+                firstWarning = false;
+            }
+            if (clip) {
+                buffer[i] = -1.0f;
+            }
+        } else if (x > 1.0f) {
+            if (firstWarning) {
+                DBG("!!! WARNING: sample out of range !!!");
+                firstWarning = false;
+            }
+            if (clip) {
+                buffer[i] = 1.0f;
+            }
+        }
+        if (silence) {
+            memset(buffer, 0, sampleCount * sizeof(float));
+            return;
+        }
+    }
+*/
+
+    // TODO: measure DC offset here
+    // TODO: measure RMS here (see KVR real-time RMS calculation best practices)
 }
 
 void AudioProcessor::getStateInformation(juce::MemoryBlock& destData)

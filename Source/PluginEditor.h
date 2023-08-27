@@ -24,18 +24,26 @@ private:
     AudioProcessor& audioProcessor;
 
     RotaryKnob gainKnob;
+    RotaryKnob lowCutKnob;
+    RotaryKnob highCutKnob;
     juce::TextButton minus6Button;
     juce::TextButton minus12Button;
     juce::TextButton bypassButton;
     juce::TextButton invertLeftButton;
     juce::TextButton invertRightButton;
     juce::TextButton swapChannelsButton;
-    SegmentedPicker channelsPicker;
     juce::TextButton protectYourEarsButton;
+    SegmentedPicker channelsPicker;
     TooltipViewer tooltips;
 
     SliderAttachment gainAttachment {
         audioProcessor.apvts, ParameterID::gain.getParamID(), gainKnob.slider
+    };
+    SliderAttachment lowCutAttachment {
+        audioProcessor.apvts, ParameterID::lowCut.getParamID(), lowCutKnob.slider
+    };
+    SliderAttachment highCutAttachment {
+        audioProcessor.apvts, ParameterID::highCut.getParamID(), highCutKnob.slider
     };
     ButtonAttachment bypassAttachment {
         audioProcessor.apvts, ParameterID::bypass.getParamID(), bypassButton

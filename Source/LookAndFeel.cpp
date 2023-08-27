@@ -1,4 +1,5 @@
 #include "LookAndFeel.h"
+#include "RotaryKnob.h"
 
 const juce::Typeface::Ptr Fonts::typeface = juce::Typeface::createSystemTypefaceFor(
     BinaryData::VictorMonoRegular_ttf, BinaryData::VictorMonoRegular_ttfSize);
@@ -36,10 +37,13 @@ public:
 
         ed->setBorder(juce::BorderSize<int>());
         ed->setIndents(2, 1);
-        ed->setInputRestrictions(8);
         ed->setJustification(juce::Justification::centredTop);
         ed->setPopupMenuEnabled(false);
 
+        // Kind of hacky!
+        if (auto* knob = dynamic_cast<RotaryKnob*>(getParentComponent()->getParentComponent())) {
+            ed->setInputRestrictions(knob->maxInputLength);
+        }
         return ed;
     }
 };

@@ -12,7 +12,6 @@ AudioProcessorEditor::AudioProcessorEditor(AudioProcessor& p)
     gainKnob.slider.setLookAndFeel(RotaryKnobLookAndFeel::get());
     gainKnob.setColor(Colors::Knob::label);
     gainKnob.setFont(Fonts::getFont());
-    gainKnob.setExplicitFocusOrder(0);
     addAndMakeVisible(gainKnob);
 
     bypassButton.setTitle("Bypass");
@@ -79,8 +78,30 @@ AudioProcessorEditor::AudioProcessorEditor(AudioProcessor& p)
     };
     addAndMakeVisible(minus12Button);
 
-    channelsPicker.setBounds(0, 0, 150, 30);
+    channelsPicker.setBounds(0, 0, 160, 30);
     addAndMakeVisible(channelsPicker);
+
+    lowCutKnob.setLabel("Low Cut");
+    lowCutKnob.slider.setDescription("Low cut / high pass filter");
+    lowCutKnob.slider.setHelpText(lowCutKnob.slider.getDescription());
+    lowCutKnob.slider.setTooltip(lowCutKnob.slider.getHelpText());
+    lowCutKnob.slider.setLookAndFeel(RotaryKnobLookAndFeel::get());
+    lowCutKnob.setColor(Colors::Knob::label);
+    lowCutKnob.setFont(Fonts::getFont());
+    lowCutKnob.setSizes(60);
+    lowCutKnob.maxInputLength = 6;
+    addAndMakeVisible(lowCutKnob);
+
+    highCutKnob.setLabel("High Cut");
+    highCutKnob.slider.setDescription("High cut / low pass filter");
+    highCutKnob.slider.setHelpText(highCutKnob.slider.getDescription());
+    highCutKnob.slider.setTooltip(highCutKnob.slider.getHelpText());
+    highCutKnob.slider.setLookAndFeel(RotaryKnobLookAndFeel::get());
+    highCutKnob.setColor(Colors::Knob::label);
+    highCutKnob.setFont(Fonts::getFont());
+    highCutKnob.setSizes(60);
+    highCutKnob.maxInputLength = 6;
+    addAndMakeVisible(highCutKnob);
 
     protectYourEarsButton.setTitle("Protect your ears");
     protectYourEarsButton.setDescription("Clips audio when too loud, disables output when screaming feedback is detected");
@@ -88,14 +109,14 @@ AudioProcessorEditor::AudioProcessorEditor(AudioProcessor& p)
     protectYourEarsButton.setTooltip(protectYourEarsButton.getHelpText());
     protectYourEarsButton.setButtonText("Protect Your Ears");
     protectYourEarsButton.setClickingTogglesState(true);
-    protectYourEarsButton.setBounds(0, 0, 150, 30);
+    protectYourEarsButton.setBounds(0, 0, 160, 30);
     protectYourEarsButton.setLookAndFeel(ButtonLookAndFeel::get());
     addAndMakeVisible(protectYourEarsButton);
 
     addAndMakeVisible(tooltips);
 
     setOpaque(true);
-    setSize(600, 400);
+    setSize(600, 460);
 }
 
 AudioProcessorEditor::~AudioProcessorEditor()
@@ -120,12 +141,12 @@ void AudioProcessorEditor::resized()
 {
     const auto bounds = getLocalBounds();
 
-    int x = 50;
+    int x = 60;
     int y = 50;
     gainKnob.setTopLeftPosition(x, y);
 
-    float y1 = y + 40; //gainKnob.getBottom() - 40;
-    x = 15;
+    int y1 = y + 40;
+    x = 25;
     minus6Button.setTopLeftPosition(x, y1);
 
     y1 += minus6Button.getHeight() + 2;
@@ -138,14 +159,22 @@ void AudioProcessorEditor::resized()
     x += invertLeftButton.getWidth() + 2;
     invertRightButton.setTopLeftPosition(x, y);
 
-    x += invertRightButton.getWidth() + 2;
+    x += invertRightButton.getWidth() + 30 - 2;
     swapChannelsButton.setTopLeftPosition(x, y);
 
     x = 20;
     y += swapChannelsButton.getHeight() + 10;
     channelsPicker.setTopLeftPosition(x, y);
 
-    y += channelsPicker.getHeight() + 10;
+    x = 30;
+    y += channelsPicker.getHeight() + 20;
+    lowCutKnob.setTopLeftPosition(x, y);
+
+    x += lowCutKnob.getWidth() + 20;
+    highCutKnob.setTopLeftPosition(x, y);
+
+    x = 20;
+    y += lowCutKnob.getHeight() + 20;
     protectYourEarsButton.setTopLeftPosition(x, y);
 
     x = bounds.getRight() - bypassButton.getWidth() - 10;
