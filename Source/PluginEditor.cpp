@@ -3,7 +3,7 @@
 #include "JuceUtils.h"
 
 AudioProcessorEditor::AudioProcessorEditor(AudioProcessor& p)
-    : juce::AudioProcessorEditor(&p), audioProcessor(p)
+    : juce::AudioProcessorEditor(&p), audioProcessor(p), channelsPicker(*p.channelsParam)
 {
     gainKnob.setLabel("Gain");
     gainKnob.slider.setDescription("Output level adjustment");
@@ -79,8 +79,18 @@ AudioProcessorEditor::AudioProcessorEditor(AudioProcessor& p)
     };
     addAndMakeVisible(minus12Button);
 
-//    channelsPicker.setBounds(0, 0, 100, 30);
-//    addAndMakeVisible(channelsPicker);
+    channelsPicker.setBounds(0, 0, 150, 30);
+    addAndMakeVisible(channelsPicker);
+
+    protectYourEarsButton.setTitle("Protect your ears");
+    protectYourEarsButton.setDescription("Turns off the audio when screaming feedback is detected");
+    protectYourEarsButton.setHelpText(protectYourEarsButton.getDescription());
+    protectYourEarsButton.setTooltip(protectYourEarsButton.getHelpText());
+    protectYourEarsButton.setButtonText("Protect Your Ears");
+    protectYourEarsButton.setClickingTogglesState(true);
+    protectYourEarsButton.setBounds(0, 0, 150, 30);
+    protectYourEarsButton.setLookAndFeel(ButtonLookAndFeel::get());
+    addAndMakeVisible(protectYourEarsButton);
 
     addAndMakeVisible(tooltips);
 
@@ -131,9 +141,12 @@ void AudioProcessorEditor::resized()
     x += invertRightButton.getWidth() + 2;
     swapChannelsButton.setTopLeftPosition(x, y);
 
-//    x = 20;
-//    y += swapChannelsButton.getHeight() + 20;
-//    channelsPicker.setTopLeftPosition(x, y);
+    x = 20;
+    y += swapChannelsButton.getHeight() + 10;
+    channelsPicker.setTopLeftPosition(x, y);
+
+    y += channelsPicker.getHeight() + 10;
+    protectYourEarsButton.setTopLeftPosition(x, y);
 
     x = bounds.getRight() - bypassButton.getWidth() - 10;
     y = 11;

@@ -2,7 +2,7 @@
 #include "PluginEditor.h"
 #include "DSP.h"
 #include "JuceUtils.h"
-#include "ProtectYourEars.h"
+//#include "ProtectYourEars.h"  //TODO: remove this file from project
 
 static juce::String stringFromDecibels(float value, int)
 {
@@ -22,6 +22,7 @@ AudioProcessor::AudioProcessor() :
     castParameter(apvts, ParameterID::invertRight, invertRightParam);
     castParameter(apvts, ParameterID::swapChannels, swapChannelsParam);
     castParameter(apvts, ParameterID::channels, channelsParam);
+    castParameter(apvts, ParameterID::protectYourEars, protectYourEarsParam);
 }
 
 AudioProcessor::~AudioProcessor()
@@ -66,6 +67,11 @@ juce::AudioProcessorValueTreeState::ParameterLayout AudioProcessor::createParame
         juce::StringArray({ "All", "Mids", "Sides" }),
         0));
 
+    layout.add(std::make_unique<juce::AudioParameterBool>(
+        ParameterID::protectYourEars,
+        "Protect Your Ears",
+        true));
+
     return layout;
 }
 
@@ -103,6 +109,7 @@ void AudioProcessor::update() noexcept
     invertRight = invertRightParam->get();
     swapChannels = swapChannelsParam->get();
     channels = channelsParam->getIndex();
+    protectYourEars = protectYourEarsParam->get();
 }
 
 void AudioProcessor::smoothen() noexcept
@@ -164,12 +171,9 @@ void AudioProcessor::processBlock(
         channelR[sample] = sampleR;
     }
 
-    /**/
-    #ifdef JUCE_DEBUG
-    protectYourEars(channelL, numSamples);
-    protectYourEars(channelR, numSamples);
-    #endif
-    /**/
+//TODO: remove
+//    protectYourEars(channelL, numSamples);
+//    protectYourEars(channelR, numSamples);
 }
 
 void AudioProcessor::getStateInformation(juce::MemoryBlock& destData)

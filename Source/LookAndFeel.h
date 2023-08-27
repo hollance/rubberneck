@@ -141,6 +141,29 @@ private:
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(ButtonLookAndFeel)
 };
 
+class PickerButtonLookAndFeel : public juce::LookAndFeel_V4
+{
+public:
+    PickerButtonLookAndFeel();
+
+    static PickerButtonLookAndFeel* get()
+    {
+        static PickerButtonLookAndFeel instance;
+        return &instance;
+    }
+
+    void drawButtonBackground(juce::Graphics& g, juce::Button& button,
+                              const juce::Colour& backgroundColour,
+                              bool shouldDrawButtonAsHighlighted,
+                              bool shouldDrawButtonAsDown) override;
+
+    void drawButtonText(juce::Graphics& g, juce::TextButton& button,
+                        bool shouldDrawButtonAsHighlighted,
+                        bool shouldDrawButtonAsDown) override;
+private:
+    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(PickerButtonLookAndFeel)
+};
+
 class RoundButtonLookAndFeel : public juce::LookAndFeel_V4
 {
 public:

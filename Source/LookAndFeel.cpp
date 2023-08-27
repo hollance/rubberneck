@@ -351,6 +351,40 @@ void ButtonLookAndFeel::drawButtonText(
 
 // =============================================================================
 
+PickerButtonLookAndFeel::PickerButtonLookAndFeel()
+{
+    setColour(juce::TextButton::textColourOffId, Colors::Button::text);
+    setColour(juce::TextButton::textColourOnId, Colors::Button::textToggled);
+}
+
+void PickerButtonLookAndFeel::drawButtonBackground(
+    juce::Graphics &g, juce::Button& button, const juce::Colour &backgroundColour,
+    [[maybe_unused]] bool shouldDrawButtonAsHighlighted, bool shouldDrawButtonAsDown)
+{
+    // do nothing
+}
+
+void PickerButtonLookAndFeel::drawButtonText(
+    juce::Graphics &g, juce::TextButton &button,
+    [[maybe_unused]] bool shouldDrawButtonAsHighlighted, bool shouldDrawButtonAsDown)
+{
+    auto bounds = button.getLocalBounds().toFloat();
+    auto buttonRect = bounds.reduced(4.0f, 2.0f).withTrimmedBottom(4.0f);
+    if (shouldDrawButtonAsDown) {
+        buttonRect.translate(0.0f, 1.0f);
+    }
+
+    g.setFont(Fonts::getFont(15.0f));
+
+    g.setColour(button.findColour(juce::TextButton::textColourOnId).withAlpha(0.5f));
+    g.drawText(button.getButtonText(), buttonRect.translated(0.0f, 1.0f), juce::Justification::centred);
+
+    g.setColour(button.findColour(juce::TextButton::textColourOffId));
+    g.drawText(button.getButtonText(), buttonRect, juce::Justification::centred);
+}
+
+// =============================================================================
+
 RoundButtonLookAndFeel::RoundButtonLookAndFeel()
 {
     setColour(juce::TextButton::buttonColourId, Colors::RoundButton::background);

@@ -13,20 +13,24 @@
       <FILE id="GHM1xe" name="JuceUtils.h" compile="0" resource="0" file="Source/JuceUtils.h"/>
       <FILE id="EwiW6X" name="LookAndFeel.cpp" compile="1" resource="0" file="Source/LookAndFeel.cpp"/>
       <FILE id="Vgpcnp" name="LookAndFeel.h" compile="0" resource="0" file="Source/LookAndFeel.h"/>
-      <FILE id="VmL96u" name="ProtectYourEars.h" compile="0" resource="0"
-            file="Source/ProtectYourEars.h"/>
-      <FILE id="IqVlL2" name="RotaryKnob.cpp" compile="1" resource="0" file="Source/RotaryKnob.cpp"/>
-      <FILE id="minFQJ" name="RotaryKnob.h" compile="0" resource="0" file="Source/RotaryKnob.h"/>
-      <FILE id="ktG7to" name="TooltipViewer.cpp" compile="1" resource="0"
-            file="Source/TooltipViewer.cpp"/>
-      <FILE id="zgUAMs" name="TooltipViewer.h" compile="0" resource="0" file="Source/TooltipViewer.h"/>
+      <FILE id="DxGPNb" name="PluginEditor.cpp" compile="1" resource="0"
+            file="Source/PluginEditor.cpp"/>
+      <FILE id="sSrMpP" name="PluginEditor.h" compile="0" resource="0" file="Source/PluginEditor.h"/>
       <FILE id="zk4DRi" name="PluginProcessor.cpp" compile="1" resource="0"
             file="Source/PluginProcessor.cpp"/>
       <FILE id="PU5j8K" name="PluginProcessor.h" compile="0" resource="0"
             file="Source/PluginProcessor.h"/>
-      <FILE id="DxGPNb" name="PluginEditor.cpp" compile="1" resource="0"
-            file="Source/PluginEditor.cpp"/>
-      <FILE id="sSrMpP" name="PluginEditor.h" compile="0" resource="0" file="Source/PluginEditor.h"/>
+      <FILE id="VmL96u" name="ProtectYourEars.h" compile="0" resource="0"
+            file="Source/ProtectYourEars.h"/>
+      <FILE id="IqVlL2" name="RotaryKnob.cpp" compile="1" resource="0" file="Source/RotaryKnob.cpp"/>
+      <FILE id="minFQJ" name="RotaryKnob.h" compile="0" resource="0" file="Source/RotaryKnob.h"/>
+      <FILE id="Varh0q" name="SegmentedPicker.cpp" compile="1" resource="0"
+            file="Source/SegmentedPicker.cpp"/>
+      <FILE id="EgTQjW" name="SegmentedPicker.h" compile="0" resource="0"
+            file="Source/SegmentedPicker.h"/>
+      <FILE id="ktG7to" name="TooltipViewer.cpp" compile="1" resource="0"
+            file="Source/TooltipViewer.cpp"/>
+      <FILE id="zgUAMs" name="TooltipViewer.h" compile="0" resource="0" file="Source/TooltipViewer.h"/>
     </GROUP>
   </MAINGROUP>
   <MODULES>

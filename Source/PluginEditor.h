@@ -4,6 +4,7 @@
 #include "PluginProcessor.h"
 #include "LookAndFeel.h"
 #include "RotaryKnob.h"
+#include "SegmentedPicker.h"
 #include "TooltipViewer.h"
 
 class AudioProcessorEditor  : public juce::AudioProcessorEditor
@@ -29,6 +30,8 @@ private:
     juce::TextButton invertLeftButton;
     juce::TextButton invertRightButton;
     juce::TextButton swapChannelsButton;
+    SegmentedPicker channelsPicker;
+    juce::TextButton protectYourEarsButton;
     TooltipViewer tooltips;
 
     SliderAttachment gainAttachment {
@@ -46,9 +49,9 @@ private:
     ButtonAttachment swapChannelsAttachment {
         audioProcessor.apvts, ParameterID::swapChannels.getParamID(), swapChannelsButton
     };
-//    ComboBoxAttachment comboBoxAttachment {
-//        audioProcessor.apvts, ParameterID::channels.getParamID(), channelsPicker
-//    };
+    ButtonAttachment protectYourEarsAttachment {
+        audioProcessor.apvts, ParameterID::protectYourEars.getParamID(), protectYourEarsButton
+    };
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(AudioProcessorEditor)
 };

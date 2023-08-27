@@ -12,6 +12,7 @@ namespace ParameterID
     PARAMETER_ID(invertRight)
     PARAMETER_ID(swapChannels)
     PARAMETER_ID(channels)
+    PARAMETER_ID(protectYourEars)
 
     #undef PARAMETER_ID
 }
@@ -49,6 +50,7 @@ public:
     juce::AudioProcessorValueTreeState apvts { *this, nullptr, "Parameters", createParameterLayout() };
 
     juce::AudioParameterFloat* gainParam;
+    juce::AudioParameterChoice* channelsParam;
 
 private:
     juce::AudioProcessorValueTreeState::ParameterLayout createParameterLayout();
@@ -60,7 +62,7 @@ private:
     juce::AudioParameterBool* invertLeftParam;
     juce::AudioParameterBool* invertRightParam;
     juce::AudioParameterBool* swapChannelsParam;
-    juce::AudioParameterChoice* channelsParam;
+    juce::AudioParameterBool* protectYourEarsParam;
 
     juce::LinearSmoothedValue<float> gainSmoother;
 
@@ -68,6 +70,7 @@ private:
     bool invertLeft;
     bool invertRight;
     bool swapChannels;
+    bool protectYourEars;
     float gain;
     int channels;
 

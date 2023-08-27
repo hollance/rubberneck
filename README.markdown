@@ -1,11 +1,8 @@
 # Rubberneck
 
 -	SIMD
--	with LNF
 
 -	VUMeter (fun!)
-
--	HPF-LPF (disabled if at 0 or nyquist)
 
 -	measurements:
   -	RMS (is there a standard for this?)
@@ -18,10 +15,10 @@
   -	Display block size (tally of which ones and how often); histogram?
   -	Current DC offset
 
+-	HPF-LPF (disabled if at 0 or nyquist)
+  - just with two smaller knobs for now
+
 -	protectYourEars built into this
   -	with a button to turn it off
   -	with warning light in the UI (green = OK, orange = clipping, red = killed the sound)
     - put this on top of the analysis section; Clear button to clear it
-
--	mono output (+ sides only mode)  [all | mids | sides]
-  - see StereoOMG for styling of this control / custom control
