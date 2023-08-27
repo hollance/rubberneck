@@ -9,6 +9,9 @@
             file="Assets/VictorMono-Regular.ttf"/>
     </GROUP>
     <GROUP id="{D49F401C-05AC-014E-0A75-D07FABCF469D}" name="Source">
+      <FILE id="GOJgx7" name="AnalysisPanel.cpp" compile="1" resource="0"
+            file="Source/AnalysisPanel.cpp"/>
+      <FILE id="q3F9Tn" name="AnalysisPanel.h" compile="0" resource="0" file="Source/AnalysisPanel.h"/>
       <FILE id="IJUBXZ" name="DSP.h" compile="0" resource="0" file="Source/DSP.h"/>
       <FILE id="GHM1xe" name="JuceUtils.h" compile="0" resource="0" file="Source/JuceUtils.h"/>
       <FILE id="EwiW6X" name="LookAndFeel.cpp" compile="1" resource="0" file="Source/LookAndFeel.cpp"/>

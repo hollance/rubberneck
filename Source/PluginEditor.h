@@ -5,6 +5,7 @@
 #include "LookAndFeel.h"
 #include "RotaryKnob.h"
 #include "SegmentedPicker.h"
+#include "AnalysisPanel.h"
 #include "TooltipViewer.h"
 
 class AudioProcessorEditor  : public juce::AudioProcessorEditor
@@ -34,6 +35,7 @@ private:
     juce::TextButton swapChannelsButton;
     juce::TextButton protectYourEarsButton;
     SegmentedPicker channelsPicker;
+    AnalysisPanel analysisPanel;
     TooltipViewer tooltips;
 
     SliderAttachment gainAttachment {

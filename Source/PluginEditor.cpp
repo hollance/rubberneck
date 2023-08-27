@@ -113,6 +113,7 @@ AudioProcessorEditor::AudioProcessorEditor(AudioProcessor& p)
     protectYourEarsButton.setLookAndFeel(ButtonLookAndFeel::get());
     addAndMakeVisible(protectYourEarsButton);
 
+    addAndMakeVisible(analysisPanel);
     addAndMakeVisible(tooltips);
 
     setOpaque(true);
@@ -134,7 +135,7 @@ void AudioProcessorEditor::paint(juce::Graphics& g)
     g.fillRect(rect);
 
     auto image = juce::ImageCache::getFromMemory(BinaryData::Logo_png, BinaryData::Logo_pngSize);
-    drawImage(g, image, 0, 0, 2);
+    drawImage(g, image, 5, 0, 2);
 }
 
 void AudioProcessorEditor::resized()
@@ -177,9 +178,11 @@ void AudioProcessorEditor::resized()
     y += lowCutKnob.getHeight() + 20;
     protectYourEarsButton.setTopLeftPosition(x, y);
 
-    x = bounds.getRight() - bypassButton.getWidth() - 10;
+    x = bounds.getRight() - bypassButton.getWidth() - 20;
     y = 11;
     bypassButton.setTopLeftPosition(x, y);
+
+    analysisPanel.setBounds(200, 53, bounds.getWidth() - 200 - 20, protectYourEarsButton.getBottom() - 57);
 
     tooltips.setBounds(bounds.withY(bounds.getBottom() - 20).withHeight(20));
 }

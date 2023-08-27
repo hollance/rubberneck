@@ -47,6 +47,12 @@ namespace Colors
         const juce::Colour backgroundPressed { 80, 80, 80 };
         const juce::Colour text { 240, 240, 240 };
     };
+
+    namespace Analysis
+    {
+        const juce::Colour background { 205, 200, 195 };
+        const juce::Colour dropShadow { 175, 170, 165 };
+    };
 };
 
 class Fonts
