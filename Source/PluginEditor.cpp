@@ -83,7 +83,7 @@ AudioProcessorEditor::AudioProcessorEditor(AudioProcessor& p)
     addAndMakeVisible(channelsPicker);
 
     protectYourEarsButton.setTitle("Protect your ears");
-    protectYourEarsButton.setDescription("Turns off the audio when screaming feedback is detected");
+    protectYourEarsButton.setDescription("Clips audio when too loud, disables output when screaming feedback is detected");
     protectYourEarsButton.setHelpText(protectYourEarsButton.getDescription());
     protectYourEarsButton.setTooltip(protectYourEarsButton.getHelpText());
     protectYourEarsButton.setButtonText("Protect Your Ears");

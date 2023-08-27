@@ -104,7 +104,7 @@ bool AudioProcessor::isBusesLayoutSupported(const BusesLayout& layouts) const
 void AudioProcessor::update() noexcept
 {
     bypassed = bypassParam->get();
-    gainSmoother.setCurrentAndTargetValue(decibelsToGain(gainParam->get()));
+    gainSmoother.setTargetValue(decibelsToGain(gainParam->get()));
     invertLeft = invertLeftParam->get();
     invertRight = invertRightParam->get();
     swapChannels = swapChannelsParam->get();
