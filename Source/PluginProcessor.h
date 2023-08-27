@@ -1,6 +1,7 @@
 #pragma once
 
 #include <JuceHeader.h>
+#include "StateVariableFilter.h"
 
 namespace ParameterID
 {
@@ -69,8 +70,8 @@ private:
     juce::AudioParameterBool* protectYourEarsParam;
 
     juce::LinearSmoothedValue<float> gainSmoother;
-    juce::LinearSmoothedValue<float> lowCutSmoother;
-    juce::LinearSmoothedValue<float> highCutSmoother;
+    juce::LinearSmoothedValue<double> lowCutSmoother;
+    juce::LinearSmoothedValue<double> highCutSmoother;
 
     bool bypassed;
     bool invertLeft;
@@ -78,9 +79,11 @@ private:
     bool swapChannels;
     bool protectYourEars;
     float gain;
-    float lowCut;
-    float highCut;
+    double lowCut, lastLowCut;
+    double highCut, lastHighCut;
     int channels;
+
+    StateVariableFilter lowCutFilter, highCutFilter;
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(AudioProcessor)
 };

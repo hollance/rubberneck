@@ -4,6 +4,8 @@
 
 -	VUMeter (fun!)
 
+- how do I draw an inner shadow with JUCE?
+
 -	measurements:
   -	RMS (is there a standard for this?)
   -	Peak (in dB but also the actual value measured, can be negative too)
@@ -19,7 +21,3 @@
   -	with a button to turn it off
   -	with warning light in the UI (green = OK, orange = clipping, red = killed the sound)
     - put this on top of the analysis section; Clear button to clear it
-
--	HPF-LPF (disabled if at 0 or nyquist)
-  - TODO: if the string ends in "k" or "kHz", then value *= 1000.0f;
-  - Cytomic SVF

@@ -22,9 +22,12 @@ static juce::String stringFromHz(float value)
 static float hzFromString(const juce::String& str)
 {
     float value = str.getFloatValue();
-    // TODO: maybe if 0, then figure out if actually zero or input error
-
-    // TODO: if the string ends in "k" or "kHz", then value *= 1000.0f;
+    if (value < 100.0f) {
+        auto s = str.trimEnd().toLowerCase();
+        if (s.endsWith("k") || s.endsWith("khz")) {
+            value *= 1000.0f;
+        }
+    }
     return value;
 }
 
@@ -125,7 +128,6 @@ juce::AudioProcessorValueTreeState::ParameterLayout AudioProcessor::createParame
 //ptr = str.getCharPointer();
 //float value = float(CharacterFunctions::readDoubleValue(ptr));
 //  this advances ptr, so maybe I can use this to figure out if it was a proper number
-
 //TODO: really should be anything that's not a number
         if (str.isEmpty() || str.toLowerCase() == "off") { return 24000.0f; }
         return hzFromString(str);
@@ -160,6 +162,13 @@ void AudioProcessor::reset()
     gainSmoother.setCurrentAndTargetValue(decibelsToGain(gainParam->get()));
     lowCutSmoother.setCurrentAndTargetValue(lowCutParam->get());
     highCutSmoother.setCurrentAndTargetValue(highCutParam->get());
+
+    // Force recalculation of the coefficients.
+    lastLowCut = -1.0f;
+    lastHighCut = -1.0f;
+
+    lowCutFilter.reset();
+    highCutFilter.reset();
 }
 
 juce::AudioProcessorParameter* AudioProcessor::getBypassParameter() const
@@ -210,6 +219,9 @@ void AudioProcessor::processBlock(
 
     if (bypassed) { return; }
 
+    auto sampleRate = getSampleRate();
+    auto nyquist = sampleRate * 0.5;
+
     bool stereo = numInputChannels > 1;
     float* channelL = buffer.getWritePointer(0);
     float* channelR = buffer.getWritePointer(stereo ? 1 : 0);
@@ -233,8 +245,24 @@ void AudioProcessor::processBlock(
             std::swap(sampleL, sampleR);
         }
 
-        // TODO: recompute filter coefficients if needed
-        // TODO: low cut + high cut
+        if (lowCut > 0.0f) {
+            lowCut = std::min(lowCut, nyquist - 1.0);
+            if (lowCut != lastLowCut) {
+                lowCutFilter.highpass(sampleRate, lowCut, 0.70710678);
+                lastLowCut = lowCut;
+            }
+            sampleL = lowCutFilter.processSample(0, sampleL);
+            sampleR = lowCutFilter.processSample(1, sampleR);
+        }
+        if (highCut < 24000.0f) {
+            highCut = std::min(highCut, nyquist - 1.0);
+            if (highCut != lastHighCut) {
+                highCutFilter.lowpass(sampleRate, highCut, 0.70710678);
+                lastHighCut = highCut;
+            }
+            sampleL = highCutFilter.processSample(0, sampleL);
+            sampleR = highCutFilter.processSample(1, sampleR);
+        }
 
         if (channels == 1) {
             float M = (sampleL + sampleR) * 0.5f;
