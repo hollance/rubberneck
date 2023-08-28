@@ -125,10 +125,6 @@ juce::AudioProcessorValueTreeState::ParameterLayout AudioProcessor::createParame
 
     auto highCutValueFromString = [](const juce::String& str)
     {
-//ptr = str.getCharPointer();
-//float value = float(CharacterFunctions::readDoubleValue(ptr));
-//  this advances ptr, so maybe I can use this to figure out if it was a proper number
-//TODO: really should be anything that's not a number
         if (str.isEmpty() || str.toLowerCase() == "off") { return 24000.0f; }
         return hzFromString(str);
     };
@@ -169,12 +165,19 @@ void AudioProcessor::reset()
 
     lowCutFilter.reset();
     highCutFilter.reset();
-    analysis.reset();
 
-    steps = 0;
-    maxSteps = int(getSampleRate() * 0.5f);
+    historySize = int(std::ceil(getSampleRate() * 0.3));  // 300 ms
+    dcHistory.resize(historySize);
+    rmsHistory.resize(historySize);
+    std::fill(dcHistory.begin(), dcHistory.end(), 0.0f);
+    std::fill(rmsHistory.begin(), rmsHistory.end(), 0.0f);
+    historyIndex = 0;
+    historyRefresh = 0;
     dcSum = 0.0f;
     rmsSum = 0.0f;
+
+    analysis.reset();
+    analysis.historySize = historySize;
 }
 
 juce::AudioProcessorParameter* AudioProcessor::getBypassParameter() const
@@ -287,6 +290,20 @@ void AudioProcessor::processBlock(
         channelR[sample] = sampleR;
     }
 
+    /*
+        I calculate the RMS / DC offset using a 300 ms circular buffer.
+
+        Alternatively, use a first-order lowpass filter. Simply add the squared
+        sample to the filter. When the UI wants to display the RMS, just take
+        the square-root of the current value of the filter (since it already
+        calculates a smoothed average). Pick a time constant that corresponds
+        to 300 ms. Something like this:
+
+            state += (x - state) * coeff;
+
+        See also: https://www.kvraudio.com/forum/viewtopic.php?t=460756
+    */
+
     // Gather statistics
     for (int channel = 0; channel < numInputChannels; ++channel) {
         float* data = buffer.getWritePointer(channel);
@@ -299,28 +316,49 @@ void AudioProcessor::processBlock(
                     analysis.peak = x;
                 }
 
-                // Measure DC offset and RMS every N samples
+                // Keep running sum for DC offset and RMS.
                 dcSum += x;
                 rmsSum += x * x;
-                steps += 1;
-                if (steps == maxSteps) {
-                    float dcOffset = dcSum / float(steps);
-                    if (dcOffset > analysis.dcOffsetMax) {
-                        analysis.dcOffsetMax = dcOffset;
-                    }
-                    float rms = std::sqrt(rmsSum / float(steps));
-                    if (rms > analysis.rmsMax) {
-                        analysis.rmsMax = rms;
-                    }
-                    analysis.dcOffset = dcOffset;
-                    analysis.rms = rms;
-                    dcSum = 0.0f;
-                    rmsSum = 0.0f;
-                    steps = 0;
+
+                // Also store the samples in a circular buffer.
+                dcHistory[historyIndex] = x;
+                rmsHistory[historyIndex] = x * x;
+                historyIndex += 1;
+                if (historyIndex == historySize) {
+                    historyIndex = 0;
+                    historyRefresh += 1;
                 }
+
+                // Remove oldest sample from the running sum.
+                dcSum -= dcHistory[historyIndex];
+                rmsSum -= rmsHistory[historyIndex];
             }
         }
     }
+
+    // To avoid floating point issues, such as an offset from building up,
+    // periodically reset the running sum by adding up all the numbers in
+    // the circular buffer.
+    if (historyRefresh > 10) {
+        historyRefresh = 0;
+        dcSum = 0.0f;
+        rmsSum = 0.0f;
+        for (int i = 0; i < historySize; ++i) {
+            dcSum += dcHistory[i];
+            rmsSum += rmsHistory[i];
+        }
+    }
+
+    // Defensive programming. Since we subtract values from the running sum,
+    // due to floating point imprecision we can end up with a negative sum in
+    // theory (as float operations are not commutative), which would be bad.
+    if (dcSum < 0.0f) { dcSum = 0.0f; }
+    if (rmsSum < 0.0f) { rmsSum = 0.0f; }
+
+    // When the UI wants to display the current value, it reads the sum and
+    // divides by N and takes the square root.
+    analysis.dcSum = dcSum;
+    analysis.rmsSum = rmsSum;
 
     // Clipping is temporary but we want to be notified without a doubt when
     // there are inf or nan values, so don't overwrite the "holy shit" state.

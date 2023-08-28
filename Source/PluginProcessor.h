@@ -86,9 +86,13 @@ private:
     double highCut, lastHighCut;
     int channels;
 
-    int steps, maxSteps;
+    int historyIndex;
+    int historySize;
+    int historyRefresh;
     float dcSum;
     float rmsSum;
+    std::vector<float> dcHistory;
+    std::vector<float> rmsHistory;
 
     StateVariableFilter lowCutFilter, highCutFilter;
 

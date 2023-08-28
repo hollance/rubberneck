@@ -103,12 +103,23 @@ void AnalysisPanel::paint(juce::Graphics& g)
     std::snprintf(s, bufSize, "Peak          % .2f dB (%f)", peakDecibels, peak);
     g.drawSingleLineText(s, 10, y);
 
+    float historySize = float(data.historySize.load());
+    float dcOffset = data.dcSum.load() / historySize;
+    float rms = std::sqrt(data.rmsSum.load() / historySize);
+
+    if (dcOffset > data.dcMax) {
+        data.dcMax = dcOffset;
+    }
+    if (rms > data.rmsMax) {
+        data.rmsMax = rms;
+    }
+
     y += lineHeight;
-    std::snprintf(s, bufSize, "DC offset     % f   max % f", data.dcOffset.load(), data.dcOffsetMax.load());
+    std::snprintf(s, bufSize, "DC offset     % f   max % f", dcOffset, data.dcMax);
     g.drawSingleLineText(s, 10, y);
 
     y += lineHeight;
-    std::snprintf(s, bufSize, "RMS            %f   max  %f", data.rms.load(), data.rmsMax.load());
+    std::snprintf(s, bufSize, "RMS            %f   max  %f", rms, data.rmsMax);
     g.drawSingleLineText(s, 10, y);
 }
 

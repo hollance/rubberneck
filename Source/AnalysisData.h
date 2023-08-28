@@ -10,10 +10,14 @@ struct AnalysisData
         blockSize = -1;
         status = 0;
         peak = 0.0f;
-        dcOffset = 0.0f;
-        dcOffsetMax = 0.0f;
-        rms = 0.0f;
+        dcSum = 0.0f;
+        dcMax = 0.0f;
+        rmsSum = 0.0f;
         rmsMax = 0.0f;
+
+        // Note: This does not reset the RMS and DC offset history buffers.
+        // Could tell the audio thread to do this using an atomic bool, but
+        // it's not very important.
     }
 
     std::atomic<float> sampleRate;
@@ -27,8 +31,10 @@ struct AnalysisData
     // linear units; can be positive or negative
     std::atomic<float> peak;
 
-    std::atomic<float> dcOffset;
-    std::atomic<float> dcOffsetMax;
-    std::atomic<float> rms;
-    std::atomic<float> rmsMax;
+    std::atomic<int> historySize;
+    std::atomic<float> dcSum;
+    std::atomic<float> rmsSum;
+
+    float dcMax;
+    float rmsMax;
 };
