@@ -100,26 +100,53 @@ void AnalysisPanel::paint(juce::Graphics& g)
     }
 
     y += lineHeight * 2;
-    std::snprintf(s, bufSize, "Peak          % .2f dB (%f)", peakDecibels, peak);
+    std::snprintf(s, bufSize, "Peak        % 7.2f dB (%+f)", peakDecibels, peak);
     g.drawSingleLineText(s, 10, y);
 
     float historySize = float(data.historySize.load());
     float dcOffset = data.dcSum.load() / historySize;
-    float rms = std::sqrt(data.rmsSum.load() / historySize);
-
     if (dcOffset > data.dcMax) {
         data.dcMax = dcOffset;
     }
-    if (rms > data.rmsMax) {
-        data.rmsMax = rms;
+    float dcOffsetDecibels = -std::numeric_limits<float>::infinity();
+    if (std::abs(dcOffset) > 0.0f) {
+        dcOffsetDecibels = gainToDecibels(std::abs(dcOffset));
+    }
+    float dcMaxDecibels = -std::numeric_limits<float>::infinity();
+    if (data.dcMax > 0.0f) {
+        dcMaxDecibels = gainToDecibels(data.dcMax);
     }
 
     y += lineHeight;
-    std::snprintf(s, bufSize, "DC offset     % f   max % f", dcOffset, data.dcMax);
+    std::snprintf(s, bufSize, "DC offset   % 7.2f dB (%+f)", dcOffsetDecibels, dcOffset);
     g.drawSingleLineText(s, 10, y);
 
     y += lineHeight;
-    std::snprintf(s, bufSize, "RMS            %f   max  %f", rms, data.rmsMax);
+    std::snprintf(s, bufSize, "  max       % 7.2f dB (%+f)", dcMaxDecibels, data.dcMax);
+    g.drawSingleLineText(s, 10, y);
+
+    // Note: If we only needed decibels, could do `10 * log10(rmsSum / size)`
+    // instead of `20 * log10(sqrt(rmsSum / size))`.
+
+    float rms = std::sqrt(data.rmsSum.load() / historySize);
+    if (rms > data.rmsMax) {
+        data.rmsMax = rms;
+    }
+    float rmsDecibels = -std::numeric_limits<float>::infinity();
+    if (rms > 0.0f) {
+        rmsDecibels = gainToDecibels(rms);
+    }
+    float rmsMaxDecibels = -std::numeric_limits<float>::infinity();
+    if (data.rmsMax > 0.0f) {
+        rmsMaxDecibels = gainToDecibels(data.rmsMax);
+    }
+
+    y += lineHeight;
+    std::snprintf(s, bufSize, "RMS         % 7.2f dB (%+f)", rmsDecibels, rms);
+    g.drawSingleLineText(s, 10, y);
+
+    y += lineHeight;
+    std::snprintf(s, bufSize, "  max       % 7.2f dB (%+f)", rmsMaxDecibels, data.rmsMax);
     g.drawSingleLineText(s, 10, y);
 }
 
