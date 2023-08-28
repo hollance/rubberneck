@@ -170,6 +170,11 @@ void AudioProcessor::reset()
     lowCutFilter.reset();
     highCutFilter.reset();
     analysis.reset();
+
+    steps = 0;
+    maxSteps = int(getSampleRate() * 0.5f);
+    dcSum = 0.0f;
+    rmsSum = 0.0f;
 }
 
 juce::AudioProcessorParameter* AudioProcessor::getBypassParameter() const
@@ -282,18 +287,36 @@ void AudioProcessor::processBlock(
         channelR[sample] = sampleR;
     }
 
-    // TODO: this also measures the highest peak (but ignore nan and inf)
-    // TODO: measure DC offset here
-    // TODO: measure RMS here (see KVR real-time RMS calculation best practices)
-
+    // Gather statistics
     for (int channel = 0; channel < numInputChannels; ++channel) {
         float* data = buffer.getWritePointer(channel);
         for (int i = 0; i < numSamples; ++i) {
             float x = data[i];
             if (!std::isnan(x) && !std::isinf(x)) {
+                // Measure peak
                 float y = std::abs(x);
                 if (y > std::abs(analysis.peak)) {
                     analysis.peak = x;
+                }
+
+                // Measure DC offset and RMS every N samples
+                dcSum += x;
+                rmsSum += x * x;
+                steps += 1;
+                if (steps == maxSteps) {
+                    float dcOffset = dcSum / float(steps);
+                    if (dcOffset > analysis.dcOffsetMax) {
+                        analysis.dcOffsetMax = dcOffset;
+                    }
+                    float rms = std::sqrt(rmsSum / float(steps));
+                    if (rms > analysis.rmsMax) {
+                        analysis.rmsMax = rms;
+                    }
+                    analysis.dcOffset = dcOffset;
+                    analysis.rms = rms;
+                    dcSum = 0.0f;
+                    rmsSum = 0.0f;
+                    steps = 0;
                 }
             }
         }
@@ -315,16 +338,12 @@ void AudioProcessor::processBlock(
             float x = data[i];
             bool silence = false;
             if (std::isnan(x)) {
-                if (protectYourEars) {
-                    DBG("!!! WARNING: nan detected in audio buffer, silencing !!!");
-                    silence = true;
-                }
+                DBG("!!! WARNING: nan detected in audio buffer, silencing !!!");
+                silence = true;
                 analysis.status = 3;
             } else if (std::isinf(x)) {
-                if (protectYourEars) {
-                    DBG("!!! WARNING: inf detected in audio buffer, silencing !!!");
-                    silence = true;
-                }
+                DBG("!!! WARNING: inf detected in audio buffer, silencing !!!");
+                silence = true;
                 analysis.status = 3;
             } else if (x < -2.0f || x > 2.0f) {
                 if (protectYourEars) {

@@ -8,6 +8,3 @@
   -	Block size: tally of which ones and how often / histogram?
 
 -	VUMeter (fun!)
-
--	RMS (see KVR post)
--	Current DC offset

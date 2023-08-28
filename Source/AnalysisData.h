@@ -10,6 +10,10 @@ struct AnalysisData
         blockSize = -1;
         status = 0;
         peak = 0.0f;
+        dcOffset = 0.0f;
+        dcOffsetMax = 0.0f;
+        rms = 0.0f;
+        rmsMax = 0.0f;
     }
 
     std::atomic<float> sampleRate;
@@ -22,4 +26,9 @@ struct AnalysisData
 
     // linear units; can be positive or negative
     std::atomic<float> peak;
+
+    std::atomic<float> dcOffset;
+    std::atomic<float> dcOffsetMax;
+    std::atomic<float> rms;
+    std::atomic<float> rmsMax;
 };

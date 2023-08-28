@@ -86,6 +86,10 @@ private:
     double highCut, lastHighCut;
     int channels;
 
+    int steps, maxSteps;
+    float dcSum;
+    float rmsSum;
+
     StateVariableFilter lowCutFilter, highCutFilter;
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(AudioProcessor)
