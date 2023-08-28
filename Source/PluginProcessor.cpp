@@ -169,6 +169,7 @@ void AudioProcessor::reset()
 
     lowCutFilter.reset();
     highCutFilter.reset();
+    analysis.reset();
 }
 
 juce::AudioProcessorParameter* AudioProcessor::getBypassParameter() const
@@ -277,47 +278,87 @@ void AudioProcessor::processBlock(
     }
 
     // TODO: this also measures the highest peak (but ignore nan and inf)
-//TODO protectyourears (do this in a loop on both channels)
-/*
-    bool firstWarning = true;
-    for (int i = 0; i < sampleCount; ++i) {
-        float x = buffer[i];
-        bool silence = false;
-        if (std::isnan(x)) {
-            DBG("!!! WARNING: nan detected in audio buffer, silencing !!!");
-            silence = true;
-        } else if (std::isinf(x)) {
-            DBG("!!! WARNING: inf detected in audio buffer, silencing !!!");
-            silence = true;
-        } else if (x < -2.0f || x > 2.0f) {  // screaming feedback
-            DBG("!!! WARNING: sample out of range, silencing !!!");
-            silence = true;
-        } else if (x < -1.0f) {
-            if (firstWarning) {
-                DBG("!!! WARNING: sample out of range !!!");
-                firstWarning = false;
-            }
-            if (clip) {
-                buffer[i] = -1.0f;
-            }
-        } else if (x > 1.0f) {
-            if (firstWarning) {
-                DBG("!!! WARNING: sample out of range !!!");
-                firstWarning = false;
-            }
-            if (clip) {
-                buffer[i] = 1.0f;
-            }
-        }
-        if (silence) {
-            memset(buffer, 0, sampleCount * sizeof(float));
-            return;
-        }
-    }
-*/
-
     // TODO: measure DC offset here
     // TODO: measure RMS here (see KVR real-time RMS calculation best practices)
+
+    for (int channel = 0; channel < numInputChannels; ++channel) {
+        float* data = buffer.getWritePointer(channel);
+        for (int i = 0; i < numSamples; ++i) {
+            float x = data[i];
+            if (!std::isnan(x) && !std::isinf(x)) {
+//                analysis.status.store(3);
+            }
+        }
+    }
+
+    // Clipping is temporary but we want to be notified without a doubt when
+    // there are inf or nan values, so don't overwrite the "holy shit" state.
+    if (analysis.status.load() < 3) {
+        analysis.status.store(0);
+    }
+
+    // We still show the current state, even if "Protect Your Ears" is off.
+    // The main reason to turn it off is to analyze the actual sound levels
+    // using a spectrum analyzer or other tool, so we don't want to clip there.
+    bool firstWarning = true;
+    for (int channel = 0; channel < numInputChannels; ++channel) {
+        float* data = buffer.getWritePointer(channel);
+        for (int i = 0; i < numSamples; ++i) {
+            float x = data[i];
+            bool silence = false;
+            if (std::isnan(x)) {
+                if (protectYourEars) {
+                    DBG("!!! WARNING: nan detected in audio buffer, silencing !!!");
+                    silence = true;
+                }
+                analysis.status.store(3);
+            } else if (std::isinf(x)) {
+                if (protectYourEars) {
+                    DBG("!!! WARNING: inf detected in audio buffer, silencing !!!");
+                    silence = true;
+                }
+                analysis.status.store(3);
+            } else if (x < -2.0f || x > 2.0f) {
+                if (protectYourEars) {
+                    DBG("!!! WARNING: sample out of range, silencing !!!");
+                    silence = true;
+                }
+                if (analysis.status.load() < 3) {
+                    analysis.status.store(2);
+                }
+            } else if (x < -1.0f) {
+                if (firstWarning) {
+                    if (protectYourEars) {
+                        DBG("!!! WARNING: sample out of range (" << x << ") !!!");
+                        firstWarning = false;
+                    }
+                    if (analysis.status.load() < 3) {
+                        analysis.status.store(1);
+                    }
+                }
+                if (protectYourEars) {
+                    data[i] = -1.0f;
+                }
+            } else if (x > 1.0f) {
+                if (firstWarning) {
+                    if (protectYourEars) {
+                        DBG("!!! WARNING: sample out of range (" << x << ") !!!");
+                        firstWarning = false;
+                    }
+                    if (analysis.status.load() < 3) {
+                        analysis.status.store(1);
+                    }
+                }
+                if (protectYourEars) {
+                    data[i] = 1.0f;
+                }
+            }
+            if (silence) {
+                std::memset(data, 0, numSamples * sizeof(float));
+                break;
+            }
+        }
+    }
 }
 
 void AudioProcessor::getStateInformation(juce::MemoryBlock& destData)

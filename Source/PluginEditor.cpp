@@ -2,8 +2,11 @@
 #include "PluginEditor.h"
 #include "JuceUtils.h"
 
-AudioProcessorEditor::AudioProcessorEditor(AudioProcessor& p)
-    : juce::AudioProcessorEditor(&p), audioProcessor(p), channelsPicker(*p.channelsParam)
+AudioProcessorEditor::AudioProcessorEditor(AudioProcessor& p) :
+    juce::AudioProcessorEditor(&p),
+    audioProcessor(p),
+    channelsPicker(*p.channelsParam),
+    analysisPanel(p.analysis)
 {
     gainKnob.setLabel("Gain");
     gainKnob.slider.setDescription("Output level adjustment");

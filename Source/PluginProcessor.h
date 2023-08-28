@@ -1,6 +1,7 @@
 #pragma once
 
 #include <JuceHeader.h>
+#include "AnalysisData.h"
 #include "StateVariableFilter.h"
 
 namespace ParameterID
@@ -56,6 +57,8 @@ public:
     juce::AudioParameterChoice* channelsParam;
     juce::AudioParameterFloat* lowCutParam;
     juce::AudioParameterFloat* highCutParam;
+
+    AnalysisData analysis;
 
 private:
     juce::AudioProcessorValueTreeState::ParameterLayout createParameterLayout();
