@@ -286,15 +286,18 @@ void AudioProcessor::processBlock(
         for (int i = 0; i < numSamples; ++i) {
             float x = data[i];
             if (!std::isnan(x) && !std::isinf(x)) {
-//                analysis.status.store(3);
+                float y = std::abs(x);
+                if (y > std::abs(analysis.peak)) {
+                    analysis.peak = x;
+                }
             }
         }
     }
 
     // Clipping is temporary but we want to be notified without a doubt when
     // there are inf or nan values, so don't overwrite the "holy shit" state.
-    if (analysis.status.load() < 3) {
-        analysis.status.store(0);
+    if (analysis.status < 3) {
+        analysis.status = 0;
     }
 
     // We still show the current state, even if "Protect Your Ears" is off.
@@ -311,20 +314,20 @@ void AudioProcessor::processBlock(
                     DBG("!!! WARNING: nan detected in audio buffer, silencing !!!");
                     silence = true;
                 }
-                analysis.status.store(3);
+                analysis.status = 3;
             } else if (std::isinf(x)) {
                 if (protectYourEars) {
                     DBG("!!! WARNING: inf detected in audio buffer, silencing !!!");
                     silence = true;
                 }
-                analysis.status.store(3);
+                analysis.status = 3;
             } else if (x < -2.0f || x > 2.0f) {
                 if (protectYourEars) {
                     DBG("!!! WARNING: sample out of range, silencing !!!");
                     silence = true;
                 }
-                if (analysis.status.load() < 3) {
-                    analysis.status.store(2);
+                if (analysis.status < 3) {
+                    analysis.status = 2;
                 }
             } else if (x < -1.0f) {
                 if (firstWarning) {
@@ -332,8 +335,8 @@ void AudioProcessor::processBlock(
                         DBG("!!! WARNING: sample out of range (" << x << ") !!!");
                         firstWarning = false;
                     }
-                    if (analysis.status.load() < 3) {
-                        analysis.status.store(1);
+                    if (analysis.status < 3) {
+                        analysis.status = 1;
                     }
                 }
                 if (protectYourEars) {
@@ -345,8 +348,8 @@ void AudioProcessor::processBlock(
                         DBG("!!! WARNING: sample out of range (" << x << ") !!!");
                         firstWarning = false;
                     }
-                    if (analysis.status.load() < 3) {
-                        analysis.status.store(1);
+                    if (analysis.status < 3) {
+                        analysis.status = 1;
                     }
                 }
                 if (protectYourEars) {

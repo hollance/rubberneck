@@ -2,12 +2,13 @@
 #include "AnalysisPanel.h"
 #include "LookAndFeel.h"
 #include "JuceUtils.h"
+#include "DSP.h"
 
 static const juce::String statusMessages[] =
 {
     "Sound levels OK",
     "Clipping",
-    "Too loud (more than +6 dB)",
+    "Too loud (over +6 dB)",
     "!!! Inf or NaN !!!",
 };
 
@@ -22,7 +23,7 @@ static const juce::Colour statusColors[] =
 AnalysisPanel::AnalysisPanel(AnalysisData& data) : data(data)
 {
     clearButton.setTitle("Clear");
-    clearButton.setDescription("Reset the analysis results");
+    clearButton.setDescription("Reset analysis results");
     clearButton.setHelpText(clearButton.getDescription());
     clearButton.setTooltip(clearButton.getHelpText());
     clearButton.setButtonText("Clear");
@@ -62,12 +63,24 @@ void AnalysisPanel::paint(juce::Graphics& g)
     g.setFont(Fonts::getFont());
     g.setColour(juce::Colours::black);
     g.drawSingleLineText(statusMessages[status], bounds.getWidth() / 2, 24, juce::Justification::horizontallyCentred);
+
+    constexpr int bufSize = 100;
+    char s[bufSize];
+    int y = 60;
+
+    float peak = data.peak.load();
+    float peakDecibels = -std::numeric_limits<float>::infinity();
+    if (std::abs(peak) > 0.0f) {
+        peakDecibels = gainToDecibels(std::abs(peak));
+    }
+
+    snprintf(s, bufSize, "Peak: %.2f dB (%f)", peakDecibels, peak);
+    g.drawSingleLineText(s, 10, y);
 }
 
 void AnalysisPanel::resized()
 {
     const auto bounds = getLocalBounds();
-
     clearButton.setTopRightPosition(bounds.getRight() - 8, bounds.getBottom() - clearButton.getHeight() - 5);
 }
 
