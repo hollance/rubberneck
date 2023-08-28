@@ -211,6 +211,11 @@ void AudioProcessor::processBlock(
     auto numOutputChannels = getTotalNumOutputChannels();
     auto numSamples = buffer.getNumSamples();
 
+    analysis.sampleRate = getSampleRate();
+    analysis.inChannels = numInputChannels;
+    analysis.outChannels = numOutputChannels;
+    analysis.blockSize = numSamples;
+
     // Clear any output channels that don't contain input data.
     for (auto i = numInputChannels; i < numOutputChannels; ++i) {
         buffer.clear(i, 0, numSamples);

@@ -64,9 +64,34 @@ void AnalysisPanel::paint(juce::Graphics& g)
     g.setColour(juce::Colours::black);
     g.drawSingleLineText(statusMessages[status], bounds.getWidth() / 2, 24, juce::Justification::horizontallyCentred);
 
+    constexpr int lineHeight = 20;
+    int y = 60;
+
     constexpr int bufSize = 100;
     char s[bufSize];
-    int y = 60;
+
+    if (data.sampleRate > 0.0) {
+        std::snprintf(s, bufSize, "Sample rate: %d", int(data.sampleRate));
+    } else {
+        std::strcpy(s, "Sample rate: unknown");
+    }
+    g.drawSingleLineText(s, 10, y);
+
+    y += lineHeight;
+    if (data.inChannels != -1) {
+        std::snprintf(s, bufSize, "Channels in: %d out: %d", data.inChannels.load(), data.outChannels.load());
+    } else {
+        std::strcpy(s, "Channels: unknown");
+    }
+    g.drawSingleLineText(s, 10, y);
+
+    y += lineHeight;
+    if (data.blockSize != -1) {
+        std::snprintf(s, bufSize, "Block size: %d", data.blockSize.load());
+    } else {
+        std::strcpy(s, "Block size: unknown");
+    }
+    g.drawSingleLineText(s, 10, y);
 
     float peak = data.peak.load();
     float peakDecibels = -std::numeric_limits<float>::infinity();
@@ -74,7 +99,8 @@ void AnalysisPanel::paint(juce::Graphics& g)
         peakDecibels = gainToDecibels(std::abs(peak));
     }
 
-    snprintf(s, bufSize, "Peak: %.2f dB (%f)", peakDecibels, peak);
+    y += lineHeight * 2;
+    std::snprintf(s, bufSize, "Peak: %.2f dB (%f)", peakDecibels, peak);
     g.drawSingleLineText(s, 10, y);
 }
 
