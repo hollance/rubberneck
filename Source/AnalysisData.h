@@ -10,10 +10,10 @@ struct AnalysisData
         blockSize = -1;
         status = 0;
         peak = 0.0f;
-        levelLeft = 0.707f;  // TODO: just for testing!
-        levelRight = 0.5f;
-        levelMids = 1.0f;  // TODO: just for testing!
-        levelSides = 0.00064f;
+        levelLeft = 0.0f;
+        levelRight = 0.0f;
+        levelMids = 0.0f;
+        levelSides = 0.0f;
         dcSum = 0.0f;
         dcMax = 0.0f;
         rmsSum = 0.0f;

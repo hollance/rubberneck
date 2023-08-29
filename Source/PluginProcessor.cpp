@@ -240,6 +240,11 @@ void AudioProcessor::processBlock(
     float* channelL = buffer.getWritePointer(0);
     float* channelR = buffer.getWritePointer(stereo ? 1 : 0);
 
+    float levelL = 0.0f;
+    float levelR = 0.0f;
+    float levelM = 0.0f;
+    float levelS = 0.0f;
+
     for (int sample = 0; sample < numSamples; ++sample) {
         smoothen();
 
@@ -278,17 +283,31 @@ void AudioProcessor::processBlock(
             sampleR = highCutFilter.processSample(1, sampleR);
         }
 
+        float sampleM = (sampleL + sampleR) * 0.5f;
+        float sampleS = (sampleL - sampleR) * 0.5f;
+
+        // Measuring the levels here makes most sense to me, so that you can
+        // still see everything even if we're only outputting mids or sides.
+        if (std::abs(sampleL) > levelL) { levelL = std::abs(sampleL); }
+        if (std::abs(sampleR) > levelR) { levelR = std::abs(sampleR); }
+        if (std::abs(sampleM) > levelM) { levelM = std::abs(sampleM); }
+        if (std::abs(sampleS) > levelS) { levelS = std::abs(sampleS); }
+
         if (channels == 1) {
-            float M = (sampleL + sampleR) * 0.5f;
-            sampleL = sampleR = M;
+            sampleL = sampleR = sampleM;
         } else if (channels == 2) {
-            float S = (sampleL - sampleR) * 0.5f;
-            sampleL = sampleR = S;
+            sampleL = sampleR = sampleS;
         }
 
         channelL[sample] = sampleL;
         channelR[sample] = sampleR;
     }
+
+    // We measure the highest level per block.
+    analysis.levelLeft = levelL;
+    analysis.levelRight = levelR;
+    analysis.levelMids = levelM;
+    analysis.levelSides = levelS;
 
     /*
         I calculate the RMS / DC offset using a 300 ms circular buffer.
