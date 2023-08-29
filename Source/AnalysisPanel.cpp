@@ -101,7 +101,11 @@ void AnalysisPanel::paint(juce::Graphics& g)
 
     y += lineHeight * 2;
     std::snprintf(s, bufSize, "Peak        % 7.2f dB (%+f)", peakDecibels, peak);
+    if (peakDecibels > 0.0f) {
+        g.setColour(juce::Colours::red);
+    }
     g.drawSingleLineText(s, 10, y);
+    g.setColour(juce::Colours::black);
 
     float historySize = float(data.historySize.load());
     float dcOffset = data.dcSum.load() / historySize;

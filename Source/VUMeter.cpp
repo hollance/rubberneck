@@ -7,7 +7,8 @@ VUMeter::VUMeter(std::atomic<float>& levelLeft, std::atomic<float>& levelRight,
                  std::atomic<float>& levelMids, std::atomic<float>& levelSides)
     : levelLeft(levelLeft), levelRight(levelRight), levelMids(levelMids), levelSides(levelSides)
 {
-    startTimerHz(60);
+    setOpaque(true);
+    startTimerHz(20);
 }
 
 VUMeter::~VUMeter()
