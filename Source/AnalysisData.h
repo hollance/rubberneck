@@ -10,6 +10,10 @@ struct AnalysisData
         blockSize = -1;
         status = 0;
         peak = 0.0f;
+        levelLeft = 0.707f;  // TODO: just for testing!
+        levelRight = 0.5f;
+        levelMids = 1.0f;  // TODO: just for testing!
+        levelSides = 0.00064f;
         dcSum = 0.0f;
         dcMax = 0.0f;
         rmsSum = 0.0f;
@@ -31,10 +35,14 @@ struct AnalysisData
     // linear units; can be positive or negative
     std::atomic<float> peak;
 
+    // VU meter
+    std::atomic<float> levelLeft, levelRight;
+    std::atomic<float> levelMids, levelSides;
+
+    // RMS and DC offset
     std::atomic<int> historySize;
     std::atomic<float> dcSum;
     std::atomic<float> rmsSum;
-
     float dcMax;
     float rmsMax;
 };

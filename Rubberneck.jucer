@@ -35,6 +35,8 @@
       <FILE id="ktG7to" name="TooltipViewer.cpp" compile="1" resource="0"
             file="Source/TooltipViewer.cpp"/>
       <FILE id="zgUAMs" name="TooltipViewer.h" compile="0" resource="0" file="Source/TooltipViewer.h"/>
+      <FILE id="XapHkm" name="VUMeter.cpp" compile="1" resource="0" file="Source/VUMeter.cpp"/>
+      <FILE id="yCbMQf" name="VUMeter.h" compile="0" resource="0" file="Source/VUMeter.h"/>
     </GROUP>
   </MAINGROUP>
   <MODULES>

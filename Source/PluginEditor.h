@@ -6,6 +6,7 @@
 #include "RotaryKnob.h"
 #include "SegmentedPicker.h"
 #include "AnalysisPanel.h"
+#include "VUMeter.h"
 #include "TooltipViewer.h"
 
 class AudioProcessorEditor  : public juce::AudioProcessorEditor
@@ -36,6 +37,7 @@ private:
     juce::TextButton protectYourEarsButton;
     SegmentedPicker channelsPicker;
     AnalysisPanel analysisPanel;
+    VUMeter vuMeter;
     TooltipViewer tooltips;
 
     SliderAttachment gainAttachment {

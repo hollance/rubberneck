@@ -6,7 +6,8 @@ AudioProcessorEditor::AudioProcessorEditor(AudioProcessor& p) :
     juce::AudioProcessorEditor(&p),
     audioProcessor(p),
     channelsPicker(*p.channelsParam),
-    analysisPanel(p.analysis)
+    analysisPanel(p.analysis),
+    vuMeter(p.analysis.levelLeft, p.analysis.levelRight, p.analysis.levelMids, p.analysis.levelSides)
 {
     gainKnob.setLabel("Gain");
     gainKnob.slider.setDescription("Output level adjustment");
@@ -107,7 +108,7 @@ AudioProcessorEditor::AudioProcessorEditor(AudioProcessor& p) :
     addAndMakeVisible(highCutKnob);
 
     protectYourEarsButton.setTitle("Protect your ears");
-    protectYourEarsButton.setDescription("Clips audio when too loud, disables output when screaming feedback is detected");
+    protectYourEarsButton.setDescription("Clips audio when too loud, disables output when screaming feedback detected");
     protectYourEarsButton.setHelpText(protectYourEarsButton.getDescription());
     protectYourEarsButton.setTooltip(protectYourEarsButton.getHelpText());
     protectYourEarsButton.setButtonText("Protect Your Ears");
@@ -117,10 +118,11 @@ AudioProcessorEditor::AudioProcessorEditor(AudioProcessor& p) :
     addAndMakeVisible(protectYourEarsButton);
 
     addAndMakeVisible(analysisPanel);
+    addAndMakeVisible(vuMeter);
     addAndMakeVisible(tooltips);
 
     setOpaque(true);
-    setSize(600, 460);
+    setSize(640, 460);
 }
 
 AudioProcessorEditor::~AudioProcessorEditor()
@@ -185,7 +187,7 @@ void AudioProcessorEditor::resized()
     y = 11;
     bypassButton.setTopLeftPosition(x, y);
 
-    analysisPanel.setBounds(200, 53, bounds.getWidth() - 200 - 20, protectYourEarsButton.getBottom() - 57);
-
+    analysisPanel.setBounds(200, 53, bounds.getWidth() - 200 - 120, protectYourEarsButton.getBottom() - 57);
+    vuMeter.setBounds(bounds.getWidth() - 100, analysisPanel.getY() - 8, 80, analysisPanel.getHeight() + 8);
     tooltips.setBounds(bounds.withY(bounds.getBottom() - 20).withHeight(20));
 }
