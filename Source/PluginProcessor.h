@@ -94,6 +94,12 @@ private:
     std::vector<float> dcHistory;
     std::vector<float> rmsHistory;
 
+    float levelL;
+    float levelR;
+    float levelM;
+    float levelS;
+    int vuStep, vuMax;
+
     StateVariableFilter lowCutFilter, highCutFilter;
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(AudioProcessor)

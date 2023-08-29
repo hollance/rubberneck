@@ -176,6 +176,13 @@ void AudioProcessor::reset()
     dcSum = 0.0f;
     rmsSum = 0.0f;
 
+    levelL = 0.0f;
+    levelR = 0.0f;
+    levelM = 0.0f;
+    levelS = 0.0f;
+    vuStep = 0;
+    vuMax = int(std::ceil(getSampleRate() * 0.01));  // 10 ms
+
     analysis.reset();
     analysis.historySize = historySize;
 }
@@ -240,11 +247,6 @@ void AudioProcessor::processBlock(
     float* channelL = buffer.getWritePointer(0);
     float* channelR = buffer.getWritePointer(stereo ? 1 : 0);
 
-    float levelL = 0.0f;
-    float levelR = 0.0f;
-    float levelM = 0.0f;
-    float levelS = 0.0f;
-
     for (int sample = 0; sample < numSamples; ++sample) {
         smoothen();
 
@@ -293,6 +295,20 @@ void AudioProcessor::processBlock(
         if (std::abs(sampleM) > levelM) { levelM = std::abs(sampleM); }
         if (std::abs(sampleS) > levelS) { levelS = std::abs(sampleS); }
 
+        // We measure the highest level every N ms.
+        vuStep += 1;
+        if (vuStep == vuMax) {
+            vuStep = 0;
+            analysis.levelLeft = levelL;
+            analysis.levelRight = levelR;
+            analysis.levelMids = levelM;
+            analysis.levelSides = levelS;
+            levelL = 0.0f;
+            levelR = 0.0f;
+            levelM = 0.0f;
+            levelS = 0.0f;
+        }
+
         if (channels == 1) {
             sampleL = sampleR = sampleM;
         } else if (channels == 2) {
@@ -302,12 +318,6 @@ void AudioProcessor::processBlock(
         channelL[sample] = sampleL;
         channelR[sample] = sampleR;
     }
-
-    // We measure the highest level per block.
-    analysis.levelLeft = levelL;
-    analysis.levelRight = levelR;
-    analysis.levelMids = levelM;
-    analysis.levelSides = levelS;
 
     /*
         I calculate the RMS / DC offset using a 300 ms circular buffer.
