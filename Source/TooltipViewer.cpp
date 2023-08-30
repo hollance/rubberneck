@@ -3,6 +3,7 @@
 
 TooltipViewer::TooltipViewer()
 {
+    setOpaque(true);
     startTimer(200);
 }
 

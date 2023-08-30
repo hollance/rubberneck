@@ -333,7 +333,8 @@ void AudioProcessor::processBlock(
         See also: https://www.kvraudio.com/forum/viewtopic.php?t=460756
     */
 
-    // Gather statistics
+    // Gather statistics. Note that JUCE also has buffer.getMagnitude()
+    // and buffer.getRMSLevel(), which may be vector optimized.
     for (int channel = 0; channel < numInputChannels; ++channel) {
         float* data = buffer.getWritePointer(channel);
         for (int i = 0; i < numSamples; ++i) {

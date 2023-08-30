@@ -13,8 +13,20 @@ public:
     void resized() override;
 
 private:
+    struct Channel
+    {
+        float level;
+        float leveldB;
+        float peak;
+        float peakdB;
+        int peakHold;
+        int x;
+    };
+
     void timerCallback() override;
-    void drawLevel(juce::Graphics& g, float level, int x);
+    void updateChannel(Channel& measurement, std::atomic<float>& value);
+    void drawLevel(juce::Graphics& g, Channel& measurement);
+    void drawPeak(juce::Graphics& g, Channel& measurement);
 
     inline int positionForLevel(float dbLevel) const noexcept
     {
@@ -26,14 +38,24 @@ private:
     std::atomic<float>& levelMids;
     std::atomic<float>& levelSides;
 
-    static constexpr float maxdB = 12.0f;
-    static constexpr float mindB = -60.0f;
-    static constexpr float stepdB = 6.0f;   // draw a tick every 6 dB
+    Channel channels[4];  // L, R, M, S
 
-    float minPos;   // maxdB line
-    float maxPos;   // mindB line
+    static constexpr float maxdB = 12.0f;      // highest dB shown
+    static constexpr float mindB = -60.0f;     // lowest dB shown
+    static constexpr float clampdB = -120.0f;  // clamp levels to this value
+    static constexpr float stepdB = 6.0f;      // draw a tick every 6 dB
 
-    float positionRed, positionYellow;
+    static constexpr int refreshRate = 20;       // 20 FPS
+    static constexpr int holdMax = refreshRate;  // one second at 20 FPS
+
+    float minPos;          // maxdB line
+    float maxPos;          // mindB line
+    float positionRed;     // 0 dB line
+    float positionYellow;  // -12 dB line
+
+    float attack;          // filter coefficients
+    float release;
+    float peakDecay;
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(VUMeter)
 };
