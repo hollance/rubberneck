@@ -45,8 +45,8 @@ private:
     static constexpr float clampdB = -120.0f;  // clamp levels to this value
     static constexpr float stepdB = 6.0f;      // draw a tick every 6 dB
 
-    static constexpr int refreshRate = 20;       // 20 FPS
-    static constexpr int holdMax = refreshRate;  // one second at 20 FPS
+    static constexpr int refreshRate = 20;
+    static constexpr int holdMax = refreshRate * 2;
 
     float minPos;          // maxdB line
     float maxPos;          // mindB line

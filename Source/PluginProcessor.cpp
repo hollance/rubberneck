@@ -295,7 +295,11 @@ void AudioProcessor::processBlock(
         if (std::abs(sampleM) > levelM) { levelM = std::abs(sampleM); }
         if (std::abs(sampleS) > levelS) { levelS = std::abs(sampleS); }
 
-        // We measure the highest level every N ms.
+        // Report the highest level every N ms. It's possible that a higher
+        // value is overwritten by a lower value if the UI does not read fast
+        // enough. I don't think that's a problem here, but could fix this by
+        // only updating the atomic when the new level is higher (for example,
+        // using compare_exchange_weak).
         vuStep += 1;
         if (vuStep == vuMax) {
             vuStep = 0;

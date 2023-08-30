@@ -11,8 +11,8 @@ VUMeter::VUMeter(std::atomic<float>& levelLeft, std::atomic<float>& levelRight,
       levelSides(levelSides)
 {
     attack = 1.0f - std::exp(-1.0f / (float(refreshRate) * 0.01f));
-    release = 1.0f - std::exp(-1.0f / (float(refreshRate) * 0.1f));
-    peakDecay = 1.0f - std::exp(-1.0f / (float(refreshRate) * 0.2f));
+    release = 1.0f - std::exp(-1.0f / (float(refreshRate) * 0.2f));
+    peakDecay = 1.0f - std::exp(-1.0f / (float(refreshRate) * 0.5f));
 
     int xs[] = { 0, 16, 50, 66 };
     for (int i = 0; i < 4; ++i) {
@@ -145,17 +145,17 @@ void VUMeter::timerCallback()
 
 void VUMeter::updateChannel(Channel &channel, std::atomic<float>& value)
 {
-    // TODO: the clean machine thing for resetting the level to 0
+    // Read the current level and immediately set it back to 0. This will
+    // cause the animation to decay even when the audio processing stops.
+    float newLevel = value.exchange(0.0f);
 
     // Sometimes attack isn't used and if new level > current level, the level
     // immediately jumps to the new value. (Same as setting attack to 1.0.)
-
-    // Apply the filter before conversion to dB, which makes the animation
-    // linear instead of exponential.
-
-    float newLevel = value.load();
     float coeff = newLevel > channel.level ? attack : release;
     channel.level += coeff * (newLevel - channel.level);
+
+    // Since we applied the filter before conversion to dB, the animation
+    // becomes linear in dB space instead of exponential.
     if (channel.level > 0.0f) {
         channel.leveldB = std::clamp(gainToDecibels(channel.level), clampdB, maxdB);
     } else {
@@ -169,7 +169,7 @@ void VUMeter::updateChannel(Channel &channel, std::atomic<float>& value)
         channel.peakHold = holdMax;
     } else if (channel.peakHold > 0) {
         channel.peakHold -= 1;
-    } else {
+    } else if (channel.peakdB > clampdB) {
         channel.peak += peakDecay * (channel.level - channel.peak);
         if (channel.peak > 0.0f) {
             channel.peakdB = std::clamp(gainToDecibels(channel.peak), clampdB, maxdB);
