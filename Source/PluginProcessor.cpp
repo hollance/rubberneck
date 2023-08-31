@@ -194,7 +194,8 @@ juce::AudioProcessorParameter* AudioProcessor::getBypassParameter() const
 
 bool AudioProcessor::isBusesLayoutSupported(const BusesLayout& layouts) const
 {
-    return layouts.getMainOutputChannelSet() == juce::AudioChannelSet::stereo();
+    return layouts.getMainOutputChannelSet() == juce::AudioChannelSet::stereo()
+        || layouts.getMainOutputChannelSet() == juce::AudioChannelSet::mono();
 }
 
 void AudioProcessor::update() noexcept

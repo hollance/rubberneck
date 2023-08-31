@@ -2,11 +2,6 @@
 
 static constexpr float pi = juce::MathConstants<float>::pi;
 
-//static constexpr int captionH = 22;
-//static constexpr int textBoxH = 16;
-//static constexpr int sliderW = 80;
-//static constexpr int sliderH = sliderW;
-
 RotaryKnob::RotaryKnob()
 {
     setSizes(80, 22, 16);
