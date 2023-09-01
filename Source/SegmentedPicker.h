@@ -14,6 +14,8 @@ public:
     void setLookAndFeel(juce::LookAndFeel* newLookAndFeel);
 
     juce::TextButton allButton;
+    juce::TextButton leftButton;
+    juce::TextButton rightButton;
     juce::TextButton midsButton;
     juce::TextButton sidesButton;
 

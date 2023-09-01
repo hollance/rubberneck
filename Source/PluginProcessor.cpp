@@ -88,7 +88,7 @@ juce::AudioProcessorValueTreeState::ParameterLayout AudioProcessor::createParame
     layout.add(std::make_unique<juce::AudioParameterChoice>(
         ParameterID::channels,
         "Output Channels",
-        juce::StringArray({ "All", "Mids", "Sides" }),
+        juce::StringArray({ "All", "Left", "Right", "Mids", "Sides" }),
         0));
 
     layout.add(std::make_unique<juce::AudioParameterBool>(
@@ -160,8 +160,8 @@ void AudioProcessor::reset()
     highCutSmoother.setCurrentAndTargetValue(highCutParam->get());
 
     // Force recalculation of the coefficients.
-    lastLowCut = -1.0f;
-    lastHighCut = -1.0f;
+    lastLowCut = -1.0;
+    lastHighCut = -1.0;
 
     lowCutFilter.reset();
     highCutFilter.reset();
@@ -314,9 +314,13 @@ void AudioProcessor::processBlock(
             levelS = 0.0f;
         }
 
-        if (channels == 1) {
+        if (channels == 1) {         // left
+            sampleR = sampleL;
+        } else if (channels == 2) {  // right
+            sampleL = sampleR;
+        } else if (channels == 3) {  // mids
             sampleL = sampleR = sampleM;
-        } else if (channels == 2) {
+        } else if (channels == 4) {  // sides
             sampleL = sampleR = sampleS;
         }
 

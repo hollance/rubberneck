@@ -26,7 +26,25 @@ SegmentedPicker::SegmentedPicker(juce::AudioParameterChoice& parameter) :
     allButton.setLookAndFeel(PickerButtonLookAndFeel::get());
     addAndMakeVisible(allButton);
 
-    midsButton.setButtonText("Mids");
+    leftButton.setButtonText("L");
+    leftButton.setDescription("Output left channel only");
+    leftButton.setHelpText(leftButton.getDescription());
+    leftButton.setTooltip(leftButton.getHelpText());
+    leftButton.setClickingTogglesState(true);
+    leftButton.setConnectedEdges(juce::Button::ConnectedOnLeft | juce::Button::ConnectedOnRight);
+    leftButton.setLookAndFeel(PickerButtonLookAndFeel::get());
+    addAndMakeVisible(leftButton);
+
+    rightButton.setButtonText("R");
+    rightButton.setDescription("Output right channel only");
+    rightButton.setHelpText(rightButton.getDescription());
+    rightButton.setTooltip(rightButton.getHelpText());
+    rightButton.setClickingTogglesState(true);
+    rightButton.setConnectedEdges(juce::Button::ConnectedOnLeft | juce::Button::ConnectedOnRight);
+    rightButton.setLookAndFeel(PickerButtonLookAndFeel::get());
+    addAndMakeVisible(rightButton);
+
+    midsButton.setButtonText("M");
     midsButton.setDescription("Output mids only (mono sound)");
     midsButton.setHelpText(midsButton.getDescription());
     midsButton.setTooltip(midsButton.getHelpText());
@@ -35,7 +53,7 @@ SegmentedPicker::SegmentedPicker(juce::AudioParameterChoice& parameter) :
     midsButton.setLookAndFeel(PickerButtonLookAndFeel::get());
     addAndMakeVisible(midsButton);
 
-    sidesButton.setButtonText("Sides");
+    sidesButton.setButtonText("S");
     sidesButton.setDescription("Output sides only");
     sidesButton.setHelpText(sidesButton.getDescription());
     sidesButton.setTooltip(sidesButton.getHelpText());
@@ -47,6 +65,8 @@ SegmentedPicker::SegmentedPicker(juce::AudioParameterChoice& parameter) :
     attachment.sendInitialUpdate();
 
     allButton.addListener(this);
+    leftButton.addListener(this);
+    rightButton.addListener(this);
     midsButton.addListener(this);
     sidesButton.addListener(this);
 }
@@ -54,6 +74,8 @@ SegmentedPicker::SegmentedPicker(juce::AudioParameterChoice& parameter) :
 SegmentedPicker::~SegmentedPicker()
 {
     allButton.removeListener(this);
+    leftButton.removeListener(this);
+    rightButton.removeListener(this);
     midsButton.removeListener(this);
     sidesButton.removeListener(this);
 }
@@ -61,6 +83,8 @@ SegmentedPicker::~SegmentedPicker()
 void SegmentedPicker::setLookAndFeel(juce::LookAndFeel* newLookAndFeel)
 {
     allButton.setLookAndFeel(newLookAndFeel);
+    leftButton.setLookAndFeel(newLookAndFeel);
+    rightButton.setLookAndFeel(newLookAndFeel);
     midsButton.setLookAndFeel(newLookAndFeel);
     sidesButton.setLookAndFeel(newLookAndFeel);
 }
@@ -85,16 +109,24 @@ void SegmentedPicker::paint(juce::Graphics& g)
     g.fillRoundedRectangle(innerRect, cornerSize - 1.0f);
 
     g.setColour(juce::Colours::black.withAlpha(0.1f));
+    g.fillRect(float(leftButton.getX()) - 1.0f, innerRect.getY(), 1.0f, innerRect.getHeight());
+    g.fillRect(float(rightButton.getX()) - 1.0f, innerRect.getY(), 1.0f, innerRect.getHeight());
     g.fillRect(float(midsButton.getX()) - 1.0f, innerRect.getY(), 1.0f, innerRect.getHeight());
     g.fillRect(float(sidesButton.getX()) - 1.0f, innerRect.getY(), 1.0f, innerRect.getHeight());
 
     g.setColour(Colors::Knob::outline);
+    g.fillRect(float(leftButton.getX()), innerRect.getY(), 1.0f, innerRect.getHeight());
+    g.fillRect(float(rightButton.getX()), innerRect.getY(), 1.0f, innerRect.getHeight());
     g.fillRect(float(midsButton.getX()), innerRect.getY(), 1.0f, innerRect.getHeight());
     g.fillRect(float(sidesButton.getX()), innerRect.getY(), 1.0f, innerRect.getHeight());
 
     juce::Rectangle<float> buttonBounds;
     if (allButton.getToggleState()) {
         buttonBounds = allButton.getBounds().toFloat();
+    } else if (leftButton.getToggleState()) {
+        buttonBounds = leftButton.getBounds().toFloat();
+    } else if (rightButton.getToggleState()) {
+        buttonBounds = rightButton.getBounds().toFloat();
     } else if (midsButton.getToggleState()) {
         buttonBounds = midsButton.getBounds().toFloat();
     } else {
@@ -111,24 +143,35 @@ void SegmentedPicker::resized()
 {
     auto margin = 5.0f;
     auto width = float(getWidth());
-    auto segmentWidth = (width - 2.0f * margin) / 3.0f;
+    auto segmentWidth = (width - 2.0f * margin) / 5.0f;
 
     int x1 = int(margin);
     int x2 = int(margin + segmentWidth);
     int x3 = int(margin + segmentWidth * 2.0f);
-    int x4 = int(width - margin);
+    int x4 = int(margin + segmentWidth * 3.0f);
+    int x5 = int(margin + segmentWidth * 4.0f);
+    int x6 = int(width - margin);
+
+    x2 += 4;  // hack: make the first segment a bit wider
+    x3 += 3;  // and spread out the difference among the
+    x4 += 2;  // other segments
+    x5 += 1;
 
     allButton.setBounds(x1, 0, x2 - x1, getHeight());
-    midsButton.setBounds(x2, 0, x3 - x2, getHeight());
-    sidesButton.setBounds(x3, 0, x4 - x3, getHeight());
+    leftButton.setBounds(x2, 0, x3 - x2, getHeight());
+    rightButton.setBounds(x3, 0, x4 - x3, getHeight());
+    midsButton.setBounds(x4, 0, x5 - x4, getHeight());
+    sidesButton.setBounds(x5, 0, x6 - x5, getHeight());
 }
 
 void SegmentedPicker::setValue(float newValue)
 {
     const juce::ScopedValueSetter<bool> svs(ignoreCallbacks, true);
     allButton.setToggleState(newValue == 0.0f, juce::sendNotificationSync);
-    midsButton.setToggleState(newValue == 1.0f, juce::sendNotificationSync);
-    sidesButton.setToggleState(newValue == 2.0f, juce::sendNotificationSync);
+    leftButton.setToggleState(newValue == 1.0f, juce::sendNotificationSync);
+    rightButton.setToggleState(newValue == 2.0f, juce::sendNotificationSync);
+    midsButton.setToggleState(newValue == 3.0f, juce::sendNotificationSync);
+    sidesButton.setToggleState(newValue == 4.0f, juce::sendNotificationSync);
 }
 
 void SegmentedPicker::buttonClicked(juce::Button* button)
@@ -136,11 +179,17 @@ void SegmentedPicker::buttonClicked(juce::Button* button)
     if (ignoreCallbacks) { return; }
 
     float newValue = 0.0f;
-    if (button == &midsButton && midsButton.getToggleState()) {
+    if (button == &leftButton && leftButton.getToggleState()) {
         newValue = 1.0f;
     }
-    if (button == &sidesButton && sidesButton.getToggleState()) {
+    if (button == &rightButton && rightButton.getToggleState()) {
         newValue = 2.0f;
+    }
+    if (button == &midsButton && midsButton.getToggleState()) {
+        newValue = 3.0f;
+    }
+    if (button == &sidesButton && sidesButton.getToggleState()) {
+        newValue = 4.0f;
     }
     attachment.setValueAsCompleteGesture(newValue);
 }
