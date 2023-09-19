@@ -82,6 +82,36 @@ AudioProcessorEditor::AudioProcessorEditor(AudioProcessor& p) :
     };
     addAndMakeVisible(minus12Button);
 
+    juce::TextButton* button = channelsPicker.getButtonAt(0);
+    button->setButtonText("All");
+    button->setDescription("Output stereo sound");
+    button->setHelpText(button->getDescription());
+    button->setTooltip(button->getHelpText());
+
+    button = channelsPicker.getButtonAt(1);
+    button->setButtonText("L");
+    button->setDescription("Output left channel only");
+    button->setHelpText(button->getDescription());
+    button->setTooltip(button->getHelpText());
+
+    button = channelsPicker.getButtonAt(2);
+    button->setButtonText("R");
+    button->setDescription("Output right channel only");
+    button->setHelpText(button->getDescription());
+    button->setTooltip(button->getHelpText());
+
+    button = channelsPicker.getButtonAt(3);
+    button->setButtonText("M");
+    button->setDescription("Output mids only (mono sound)");
+    button->setHelpText(button->getDescription());
+    button->setTooltip(button->getHelpText());
+
+    button = channelsPicker.getButtonAt(4);
+    button->setButtonText("S");
+    button->setDescription("Output sides only");
+    button->setHelpText(button->getDescription());
+    button->setTooltip(button->getHelpText());
+
     channelsPicker.setBounds(0, 0, 160, 30);
     addAndMakeVisible(channelsPicker);
 

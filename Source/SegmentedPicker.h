@@ -1,6 +1,7 @@
 #pragma once
 
 #include <JuceHeader.h>
+#include <vector>
 
 class SegmentedPicker : public juce::Component, private juce::Button::Listener
 {
@@ -13,11 +14,15 @@ public:
 
     void setLookAndFeel(juce::LookAndFeel* newLookAndFeel);
 
-    juce::TextButton allButton;
-    juce::TextButton leftButton;
-    juce::TextButton rightButton;
-    juce::TextButton midsButton;
-    juce::TextButton sidesButton;
+    int getNumButtons() const noexcept
+    {
+        return int(buttons.size());
+    }
+
+    juce::TextButton* getButtonAt(int index) const noexcept
+    {
+        return buttons[index].get();
+    }
 
 private:
     juce::DropShadow dropShadow;
@@ -25,8 +30,11 @@ private:
     void setValue(float newValue);
     void buttonClicked(juce::Button* button) override;
 
+    std::vector<std::unique_ptr<juce::TextButton>> buttons;
+
     juce::ParameterAttachment attachment;
     bool ignoreCallbacks = false;
+    int selectedIndex = -1;
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(SegmentedPicker)
 };

@@ -228,7 +228,7 @@ BarButtonLookAndFeel::BarButtonLookAndFeel()
 }
 
 void BarButtonLookAndFeel::drawButtonBackground(
-    juce::Graphics &g, juce::Button& button, const juce::Colour &backgroundColour,
+    juce::Graphics& g, juce::Button& button, const juce::Colour& backgroundColour,
     [[maybe_unused]] bool shouldDrawButtonAsHighlighted, bool shouldDrawButtonAsDown)
 {
     auto bounds = button.getLocalBounds().toFloat().reduced(0.5f, 1.5f);
@@ -253,7 +253,7 @@ void BarButtonLookAndFeel::drawButtonBackground(
 }
 
 void BarButtonLookAndFeel::drawButtonText(
-    juce::Graphics &g, juce::TextButton &button,
+    juce::Graphics& g, juce::TextButton& button,
     [[maybe_unused]] bool shouldDrawButtonAsHighlighted, bool shouldDrawButtonAsDown)
 {
     auto bounds = button.getLocalBounds().toFloat().reduced(0.5f, 1.5f);
@@ -281,8 +281,11 @@ ButtonLookAndFeel::ButtonLookAndFeel() : dropShadow(Colors::Knob::dropShadow, 4,
 }
 
 void ButtonLookAndFeel::drawButtonBackground(
-    juce::Graphics &g, juce::Button& button, const juce::Colour &backgroundColour,
-    [[maybe_unused]] bool shouldDrawButtonAsHighlighted, bool shouldDrawButtonAsDown)
+    juce::Graphics& g,
+    juce::Button& button,
+    [[maybe_unused]] const juce::Colour& backgroundColour,
+    [[maybe_unused]] bool shouldDrawButtonAsHighlighted,
+    bool shouldDrawButtonAsDown)
 {
     auto bounds = button.getLocalBounds().toFloat();
     auto cornerSize = bounds.getHeight() * 0.25f;
@@ -327,7 +330,7 @@ void ButtonLookAndFeel::drawButtonBackground(
 }
 
 void ButtonLookAndFeel::drawButtonText(
-    juce::Graphics &g, juce::TextButton &button,
+    juce::Graphics& g, juce::TextButton& button,
     [[maybe_unused]] bool shouldDrawButtonAsHighlighted, bool shouldDrawButtonAsDown)
 {
     auto bounds = button.getLocalBounds().toFloat();
@@ -362,14 +365,13 @@ PickerButtonLookAndFeel::PickerButtonLookAndFeel()
 }
 
 void PickerButtonLookAndFeel::drawButtonBackground(
-    juce::Graphics &g, juce::Button& button, const juce::Colour &backgroundColour,
-    [[maybe_unused]] bool shouldDrawButtonAsHighlighted, bool shouldDrawButtonAsDown)
+    juce::Graphics&, juce::Button&, const juce::Colour&, bool, bool)
 {
     // do nothing
 }
 
 void PickerButtonLookAndFeel::drawButtonText(
-    juce::Graphics &g, juce::TextButton &button,
+    juce::Graphics& g, juce::TextButton& button,
     [[maybe_unused]] bool shouldDrawButtonAsHighlighted, bool shouldDrawButtonAsDown)
 {
     auto bounds = button.getLocalBounds().toFloat();
@@ -396,7 +398,7 @@ RoundButtonLookAndFeel::RoundButtonLookAndFeel()
 }
 
 void RoundButtonLookAndFeel::drawButtonBackground(
-    juce::Graphics &g, juce::Button& button, const juce::Colour &backgroundColour,
+    juce::Graphics& g, juce::Button& button, const juce::Colour& backgroundColour,
     [[maybe_unused]] bool shouldDrawButtonAsHighlighted, bool shouldDrawButtonAsDown)
 {
     auto bounds = button.getLocalBounds().toFloat();
@@ -409,8 +411,9 @@ void RoundButtonLookAndFeel::drawButtonBackground(
 }
 
 void RoundButtonLookAndFeel::drawButtonText(
-    juce::Graphics &g, juce::TextButton &button,
-    [[maybe_unused]] bool shouldDrawButtonAsHighlighted, bool shouldDrawButtonAsDown)
+    juce::Graphics& g, juce::TextButton& button,
+    [[maybe_unused]] bool shouldDrawButtonAsHighlighted,
+    [[maybe_unused]] bool shouldDrawButtonAsDown)
 {
     auto bounds = button.getLocalBounds().toFloat();
     g.setFont(Fonts::getFont(12.0f));
