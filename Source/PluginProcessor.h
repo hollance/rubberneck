@@ -15,6 +15,7 @@ namespace ParameterID
     PARAMETER_ID(swapChannels)
     PARAMETER_ID(channels)
     PARAMETER_ID(protectYourEars)
+    PARAMETER_ID(mute)
     PARAMETER_ID(lowCut)
     PARAMETER_ID(highCut)
 
@@ -71,6 +72,7 @@ private:
     juce::AudioParameterBool* invertRightParam;
     juce::AudioParameterBool* swapChannelsParam;
     juce::AudioParameterBool* protectYourEarsParam;
+    juce::AudioParameterBool* muteParam;
 
     juce::LinearSmoothedValue<float> gainSmoother;
     juce::LinearSmoothedValue<double> lowCutSmoother;
@@ -81,6 +83,7 @@ private:
     bool invertRight;
     bool swapChannels;
     bool protectYourEars;
+    bool mute;
     float gain;
     double lowCut, lastLowCut;
     double highCut, lastHighCut;

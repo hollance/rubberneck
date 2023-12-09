@@ -45,6 +45,7 @@ AudioProcessor::AudioProcessor() :
     castParameter(apvts, ParameterID::swapChannels, swapChannelsParam);
     castParameter(apvts, ParameterID::channels, channelsParam);
     castParameter(apvts, ParameterID::protectYourEars, protectYourEarsParam);
+    castParameter(apvts, ParameterID::mute, muteParam);
     castParameter(apvts, ParameterID::lowCut, lowCutParam);
     castParameter(apvts, ParameterID::highCut, highCutParam);
 }
@@ -95,6 +96,11 @@ juce::AudioProcessorValueTreeState::ParameterLayout AudioProcessor::createParame
         ParameterID::protectYourEars,
         "Protect Your Ears",
         true));
+
+    layout.add(std::make_unique<juce::AudioParameterBool>(
+        ParameterID::mute,
+        "Mute Output",
+        false));
 
     auto lowCutStringFromValue = [](float value, int)
     {
@@ -206,6 +212,7 @@ void AudioProcessor::update() noexcept
     swapChannels = swapChannelsParam->get();
     channels = channelsParam->getIndex();
     protectYourEars = protectYourEarsParam->get();
+    mute = muteParam->get();
 
     gainSmoother.setTargetValue(decibelsToGain(gainParam->get()));
     lowCutSmoother.setTargetValue(lowCutParam->get());
@@ -322,6 +329,11 @@ void AudioProcessor::processBlock(
             sampleL = sampleR = sampleM;
         } else if (channels == 4) {  // sides
             sampleL = sampleR = sampleS;
+        }
+
+        if (mute) {
+            sampleL = 0.0f;
+            sampleR = 0.0f;
         }
 
         channelL[sample] = sampleL;

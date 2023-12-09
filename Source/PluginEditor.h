@@ -35,6 +35,7 @@ private:
     juce::TextButton invertRightButton;
     juce::TextButton swapChannelsButton;
     juce::TextButton protectYourEarsButton;
+    juce::TextButton muteButton;
     SegmentedPicker channelsPicker;
     AnalysisPanel analysisPanel;
     VUMeter vuMeter;
@@ -63,6 +64,9 @@ private:
     };
     ButtonAttachment protectYourEarsAttachment {
         audioProcessor.apvts, ParameterID::protectYourEars.getParamID(), protectYourEarsButton
+    };
+    ButtonAttachment muteAttachment {
+        audioProcessor.apvts, ParameterID::mute.getParamID(), muteButton
     };
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(AudioProcessorEditor)

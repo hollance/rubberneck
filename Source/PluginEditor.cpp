@@ -147,12 +147,22 @@ AudioProcessorEditor::AudioProcessorEditor(AudioProcessor& p) :
     protectYourEarsButton.setLookAndFeel(ButtonLookAndFeel::get());
     addAndMakeVisible(protectYourEarsButton);
 
+    muteButton.setTitle("Mute Output");
+    muteButton.setDescription("Silences all audio output");
+    muteButton.setHelpText(muteButton.getDescription());
+    muteButton.setTooltip(muteButton.getHelpText());
+    muteButton.setButtonText("Mute Output");
+    muteButton.setClickingTogglesState(true);
+    muteButton.setBounds(0, 0, 160, 30);
+    muteButton.setLookAndFeel(ButtonLookAndFeel::get());
+    addAndMakeVisible(muteButton);
+
     addAndMakeVisible(analysisPanel);
     addAndMakeVisible(vuMeter);
     addAndMakeVisible(tooltips);
 
     setOpaque(true);
-    setSize(640, 460);
+    setSize(640, 500);
 }
 
 AudioProcessorEditor::~AudioProcessorEditor()
@@ -213,11 +223,14 @@ void AudioProcessorEditor::resized()
     y += lowCutKnob.getHeight() + 20;
     protectYourEarsButton.setTopLeftPosition(x, y);
 
+    y += protectYourEarsButton.getHeight() + 10;
+    muteButton.setTopLeftPosition(x, y);
+
     x = bounds.getRight() - bypassButton.getWidth() - 20;
     y = 11;
     bypassButton.setTopLeftPosition(x, y);
 
-    analysisPanel.setBounds(200, 53, bounds.getWidth() - 200 - 120, protectYourEarsButton.getBottom() - 57);
+    analysisPanel.setBounds(200, 53, bounds.getWidth() - 200 - 120, muteButton.getBottom() - 57);
     vuMeter.setBounds(bounds.getWidth() - 100, analysisPanel.getY() - 8, 80, analysisPanel.getHeight() + 8);
     tooltips.setBounds(bounds.withY(bounds.getBottom() - 20).withHeight(20));
 }
