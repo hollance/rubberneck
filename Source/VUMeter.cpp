@@ -18,6 +18,7 @@ VUMeter::VUMeter(std::atomic<float>& levelLeft, std::atomic<float>& levelRight,
     for (int i = 0; i < 4; ++i) {
         channels[i].level = 0.0f;
         channels[i].leveldB = clampdB;
+        channels[i].peak = 0.0f;
         channels[i].peakdB = clampdB;
         channels[i].peakHold = 0;
         channels[i].x = xs[i];
