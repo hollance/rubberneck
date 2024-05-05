@@ -174,57 +174,6 @@ void RotaryKnobLookAndFeel::drawTextEditorOutline(
 
 // =============================================================================
 
-BarButtonLookAndFeel::BarButtonLookAndFeel()
-{
-    setColour(juce::TextButton::buttonColourId, Colors::BarButton::background);
-    setColour(juce::TextButton::buttonOnColourId, Colors::BarButton::backgroundToggled);
-    setColour(juce::TextButton::textColourOffId, Colors::BarButton::text);
-    setColour(juce::TextButton::textColourOnId, Colors::BarButton::textToggled);
-}
-
-void BarButtonLookAndFeel::drawButtonBackground(
-    juce::Graphics& g, juce::Button& button, const juce::Colour& backgroundColour,
-    [[maybe_unused]] bool shouldDrawButtonAsHighlighted, bool shouldDrawButtonAsDown)
-{
-    auto bounds = button.getLocalBounds().toFloat().reduced(0.5f, 1.5f);
-    auto cornerSize = 2.0f;
-
-    if (shouldDrawButtonAsDown) {
-        bounds.translate(0.0f, 1.0f);
-    }
-
-    g.setColour(backgroundColour);
-    g.fillRoundedRectangle(bounds, cornerSize);
-
-    if (button.getToggleState()) {
-        g.setColour(Colors::BarButton::borderToggled);
-    } else {
-        g.setColour(Colors::BarButton::border);
-    }
-    g.drawRoundedRectangle(bounds, cornerSize, 1.0f);
-}
-
-void BarButtonLookAndFeel::drawButtonText(
-    juce::Graphics& g, juce::TextButton& button,
-    [[maybe_unused]] bool shouldDrawButtonAsHighlighted, bool shouldDrawButtonAsDown)
-{
-    auto bounds = button.getLocalBounds().toFloat().reduced(0.5f, 1.5f);
-    if (shouldDrawButtonAsDown) {
-        bounds.translate(0.0f, 1.0f);
-    }
-
-    if (button.getToggleState()) {
-        g.setColour(button.findColour(juce::TextButton::textColourOnId));
-    } else {
-        g.setColour(button.findColour(juce::TextButton::textColourOffId));
-    }
-
-    g.setFont(Fonts::getFont(12.0f));
-    g.drawText(button.getButtonText(), bounds, juce::Justification::centred);
-}
-
-// =============================================================================
-
 ButtonLookAndFeel::ButtonLookAndFeel()
 {
     setColour(juce::TextButton::buttonColourId, Colors::Button::background);

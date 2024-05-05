@@ -17,16 +17,6 @@ namespace Colors
         const juce::Colour caret { 0, 0, 0 };
     }
 
-    namespace BarButton
-    {
-        const juce::Colour background { 241, 239, 243 };
-        const juce::Colour backgroundToggled { 255, 255, 255 };
-        const juce::Colour border { 121, 120, 122 };
-        const juce::Colour borderToggled { 173, 169, 174 };
-        const juce::Colour text { 31, 30, 32 };
-        const juce::Colour textToggled { 121, 120, 122 };
-    }
-
     namespace Button
     {
         const juce::Colour background { 241, 239, 243 };
@@ -84,29 +74,6 @@ public:
 
 private:
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(RotaryKnobLookAndFeel)
-};
-
-class BarButtonLookAndFeel : public juce::LookAndFeel_V4
-{
-public:
-    BarButtonLookAndFeel();
-
-    static BarButtonLookAndFeel* get()
-    {
-        static BarButtonLookAndFeel instance;
-        return &instance;
-    }
-
-    void drawButtonBackground(juce::Graphics& g, juce::Button& button,
-                              const juce::Colour& backgroundColour,
-                              bool shouldDrawButtonAsHighlighted,
-                              bool shouldDrawButtonAsDown) override;
-
-    void drawButtonText(juce::Graphics& g, juce::TextButton& button,
-                        bool shouldDrawButtonAsHighlighted,
-                        bool shouldDrawButtonAsDown) override;
-private:
-    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(BarButtonLookAndFeel)
 };
 
 class ButtonLookAndFeel : public juce::LookAndFeel_V4

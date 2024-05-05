@@ -220,6 +220,6 @@ void AudioProcessorEditor::resized()
     bypassButton.setTopLeftPosition(x, y);
 
     analysisPanel.setBounds(200, 18, bounds.getWidth() - 200 - 120, muteButton.getBottom() - 20);
-    vuMeter.setBounds(bounds.getWidth() - 100, analysisPanel.getY() - 8, 80, analysisPanel.getHeight() + 12);
+    vuMeter.setBounds(bounds.getWidth() - 100, analysisPanel.getY() - 8, 80, analysisPanel.getHeight() + 8);
     tooltips.setBounds(bounds.withY(bounds.getBottom() - 20).withHeight(20));
 }
