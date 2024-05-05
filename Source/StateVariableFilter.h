@@ -2,6 +2,11 @@
 
 #include <cmath>
 
+/**
+  State variable filter (SVF), designed by Andrew Simper of Cytomic.
+
+  http://cytomic.com/files/dsp/SvfLinearTrapOptimised2.pdf
+ */
 class StateVariableFilter
 {
 public:

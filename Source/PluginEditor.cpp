@@ -1,11 +1,10 @@
 #include "PluginProcessor.h"
 #include "PluginEditor.h"
-#include "JuceUtils.h"
 
 AudioProcessorEditor::AudioProcessorEditor(AudioProcessor& p) :
     juce::AudioProcessorEditor(&p),
     audioProcessor(p),
-    channelsPicker(*p.channelsParam),
+    channelsPicker(*p.params.channelsParam),
     analysisPanel(p.analysis),
     vuMeter(p.analysis.levelLeft, p.analysis.levelRight, p.analysis.levelMids, p.analysis.levelSides)
 {
@@ -18,23 +17,13 @@ AudioProcessorEditor::AudioProcessorEditor(AudioProcessor& p) :
     gainKnob.setFont(Fonts::getFont());
     addAndMakeVisible(gainKnob);
 
-    bypassButton.setTitle("Bypass");
-    bypassButton.setDescription("Bypass the effect");
-    bypassButton.setHelpText(bypassButton.getDescription());
-    bypassButton.setTooltip(bypassButton.getHelpText());
-    bypassButton.setButtonText("Bypass");
-    bypassButton.setClickingTogglesState(true);
-    bypassButton.setBounds(0, 0, 50, 19);
-    bypassButton.setLookAndFeel(BarButtonLookAndFeel::get());
-    addAndMakeVisible(bypassButton);
-
     invertLeftButton.setTitle("Phase invert left");
     invertLeftButton.setDescription("Invert the phase of the left output channel");
     invertLeftButton.setHelpText(invertLeftButton.getDescription());
     invertLeftButton.setTooltip(invertLeftButton.getHelpText());
     invertLeftButton.setButtonText(juce::CharPointer_UTF8("ΦL"));
     invertLeftButton.setClickingTogglesState(true);
-    invertLeftButton.setBounds(0, 0, 40, 30);
+    invertLeftButton.setBounds(0, 0, 40, 25);
     invertLeftButton.setLookAndFeel(ButtonLookAndFeel::get());
     addAndMakeVisible(invertLeftButton);
 
@@ -44,7 +33,7 @@ AudioProcessorEditor::AudioProcessorEditor(AudioProcessor& p) :
     invertRightButton.setTooltip(invertRightButton.getHelpText());
     invertRightButton.setButtonText(juce::CharPointer_UTF8("ΦR"));
     invertRightButton.setClickingTogglesState(true);
-    invertRightButton.setBounds(0, 0, 40, 30);
+    invertRightButton.setBounds(0, 0, 40, 25);
     invertRightButton.setLookAndFeel(ButtonLookAndFeel::get());
     addAndMakeVisible(invertRightButton);
 
@@ -54,7 +43,7 @@ AudioProcessorEditor::AudioProcessorEditor(AudioProcessor& p) :
     swapChannelsButton.setTooltip(swapChannelsButton.getHelpText());
     swapChannelsButton.setButtonText(juce::CharPointer_UTF8("L←→R"));
     swapChannelsButton.setClickingTogglesState(true);
-    swapChannelsButton.setBounds(0, 0, 50, 30);
+    swapChannelsButton.setBounds(0, 0, 50, 25);
     swapChannelsButton.setLookAndFeel(ButtonLookAndFeel::get());
     addAndMakeVisible(swapChannelsButton);
 
@@ -64,9 +53,9 @@ AudioProcessorEditor::AudioProcessorEditor(AudioProcessor& p) :
     minus6Button.setTooltip(minus6Button.getHelpText());
     minus6Button.setButtonText("6");
     minus6Button.setBounds(0, 0, 20, 20);
-    minus6Button.setLookAndFeel(RoundButtonLookAndFeel::get());
+    minus6Button.setLookAndFeel(CircleButtonLookAndFeel::get());
     minus6Button.onClick = [this](){
-        audioProcessor.gainParam->setValueNotifyingHost(audioProcessor.gainParam->convertTo0to1(-6.0f));
+        audioProcessor.params.gainParam->setValueNotifyingHost(audioProcessor.params.gainParam->convertTo0to1(-6.0f));
     };
     addAndMakeVisible(minus6Button);
 
@@ -76,9 +65,9 @@ AudioProcessorEditor::AudioProcessorEditor(AudioProcessor& p) :
     minus12Button.setTooltip(minus12Button.getHelpText());
     minus12Button.setButtonText("12");
     minus12Button.setBounds(0, 0, 20, 20);
-    minus12Button.setLookAndFeel(RoundButtonLookAndFeel::get());
+    minus12Button.setLookAndFeel(CircleButtonLookAndFeel::get());
     minus12Button.onClick = [this](){
-        audioProcessor.gainParam->setValueNotifyingHost(audioProcessor.gainParam->convertTo0to1(-12.0f));
+        audioProcessor.params.gainParam->setValueNotifyingHost(audioProcessor.params.gainParam->convertTo0to1(-12.0f));
     };
     addAndMakeVisible(minus12Button);
 
@@ -112,7 +101,7 @@ AudioProcessorEditor::AudioProcessorEditor(AudioProcessor& p) :
     button->setHelpText(button->getDescription());
     button->setTooltip(button->getHelpText());
 
-    channelsPicker.setBounds(0, 0, 160, 30);
+    channelsPicker.setBounds(0, 0, 160, 25);
     addAndMakeVisible(channelsPicker);
 
     lowCutKnob.setLabel("Low Cut");
@@ -138,31 +127,41 @@ AudioProcessorEditor::AudioProcessorEditor(AudioProcessor& p) :
     addAndMakeVisible(highCutKnob);
 
     protectYourEarsButton.setTitle("Protect your ears");
-    protectYourEarsButton.setDescription("Clips audio when too loud, disables output when screaming feedback detected");
+    protectYourEarsButton.setDescription("Clip audio when too loud, disable output when screaming feedback detected");
     protectYourEarsButton.setHelpText(protectYourEarsButton.getDescription());
     protectYourEarsButton.setTooltip(protectYourEarsButton.getHelpText());
     protectYourEarsButton.setButtonText("Protect Your Ears");
     protectYourEarsButton.setClickingTogglesState(true);
-    protectYourEarsButton.setBounds(0, 0, 160, 30);
+    protectYourEarsButton.setBounds(0, 0, 160, 25);
     protectYourEarsButton.setLookAndFeel(ButtonLookAndFeel::get());
     addAndMakeVisible(protectYourEarsButton);
 
     muteButton.setTitle("Mute Output");
-    muteButton.setDescription("Silences all audio output");
+    muteButton.setDescription("Silence all audio output");
     muteButton.setHelpText(muteButton.getDescription());
     muteButton.setTooltip(muteButton.getHelpText());
-    muteButton.setButtonText("Mute Output");
+    muteButton.setButtonText("Mute");
     muteButton.setClickingTogglesState(true);
-    muteButton.setBounds(0, 0, 160, 30);
+    muteButton.setBounds(0, 0, 75, 25);
     muteButton.setLookAndFeel(ButtonLookAndFeel::get());
     addAndMakeVisible(muteButton);
+
+    bypassButton.setTitle("Bypass");
+    bypassButton.setDescription("Bypass the effect");
+    bypassButton.setHelpText(bypassButton.getDescription());
+    bypassButton.setTooltip(bypassButton.getHelpText());
+    bypassButton.setButtonText("Bypass");
+    bypassButton.setClickingTogglesState(true);
+    bypassButton.setBounds(0, 0, 75, 25);
+    bypassButton.setLookAndFeel(ButtonLookAndFeel::get());
+    addAndMakeVisible(bypassButton);
 
     addAndMakeVisible(analysisPanel);
     addAndMakeVisible(vuMeter);
     addAndMakeVisible(tooltips);
 
     setOpaque(true);
-    setSize(640, 500);
+    setSize(640, 430);
 }
 
 AudioProcessorEditor::~AudioProcessorEditor()
@@ -171,16 +170,7 @@ AudioProcessorEditor::~AudioProcessorEditor()
 
 void AudioProcessorEditor::paint(juce::Graphics& g)
 {
-    const auto bounds = getLocalBounds();
-    auto rect = bounds.withHeight(40);
-
     g.fillAll(Colors::background);
-
-    g.setColour(Colors::Knob::trackActive);
-    g.fillRect(rect);
-
-    auto image = juce::ImageCache::getFromMemory(BinaryData::Logo_png, BinaryData::Logo_pngSize);
-    drawImage(g, image, 5, 0, 2);
 }
 
 void AudioProcessorEditor::resized()
@@ -188,7 +178,7 @@ void AudioProcessorEditor::resized()
     const auto bounds = getLocalBounds();
 
     int x = 60;
-    int y = 50;
+    int y = 10;
     gainKnob.setTopLeftPosition(x, y);
 
     int y1 = y + 40;
@@ -209,7 +199,7 @@ void AudioProcessorEditor::resized()
     swapChannelsButton.setTopLeftPosition(x, y);
 
     x = 20;
-    y += swapChannelsButton.getHeight() + 10;
+    y += swapChannelsButton.getHeight() + 5;
     channelsPicker.setTopLeftPosition(x, y);
 
     x = 30;
@@ -223,14 +213,13 @@ void AudioProcessorEditor::resized()
     y += lowCutKnob.getHeight() + 20;
     protectYourEarsButton.setTopLeftPosition(x, y);
 
-    y += protectYourEarsButton.getHeight() + 10;
+    y += protectYourEarsButton.getHeight() + 5;
     muteButton.setTopLeftPosition(x, y);
 
-    x = bounds.getRight() - bypassButton.getWidth() - 20;
-    y = 11;
+    x += muteButton.getWidth() + 10;
     bypassButton.setTopLeftPosition(x, y);
 
-    analysisPanel.setBounds(200, 53, bounds.getWidth() - 200 - 120, muteButton.getBottom() - 57);
-    vuMeter.setBounds(bounds.getWidth() - 100, analysisPanel.getY() - 8, 80, analysisPanel.getHeight() + 8);
+    analysisPanel.setBounds(200, 18, bounds.getWidth() - 200 - 120, muteButton.getBottom() - 20);
+    vuMeter.setBounds(bounds.getWidth() - 100, analysisPanel.getY() - 8, 80, analysisPanel.getHeight() + 12);
     tooltips.setBounds(bounds.withY(bounds.getBottom() - 20).withHeight(20));
 }

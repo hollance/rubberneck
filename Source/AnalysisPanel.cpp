@@ -1,8 +1,6 @@
 #include <JuceHeader.h>
 #include "AnalysisPanel.h"
 #include "LookAndFeel.h"
-#include "JuceUtils.h"
-#include "DSP.h"
 
 static const juce::String statusMessages[] =
 {
@@ -27,7 +25,7 @@ AnalysisPanel::AnalysisPanel(AnalysisData& data) : data(data)
     clearButton.setHelpText(clearButton.getDescription());
     clearButton.setTooltip(clearButton.getHelpText());
     clearButton.setButtonText("Clear");
-    clearButton.setBounds(0, 0, 80, 30);
+    clearButton.setBounds(0, 0, 80, 25);
     clearButton.setLookAndFeel(ButtonLookAndFeel::get());
     clearButton.onClick = [&data](){
         data.reset();
@@ -49,12 +47,10 @@ void AnalysisPanel::paint(juce::Graphics& g)
     g.fillAll(Colors::background);
 
     g.setColour(Colors::Analysis::background);
-    g.fillRoundedRectangle(bounds, 8.0f);
+    g.fillRoundedRectangle(bounds, 4.0f);
 
-    juce::Path path;
-    path.addRoundedRectangle(bounds, 8.0f);
-    juce::DropShadow dropShadow(Colors::Analysis::dropShadow, 8, {0, 4});
-    drawInnerShadow(g, path, dropShadow);
+    g.setColour(Colors::Analysis::border);
+    g.drawRoundedRectangle(bounds.reduced(0.5f), 4.0f, 1.0f);
 
     int status = data.status.load();
     g.setColour(statusColors[status]);
@@ -63,6 +59,8 @@ void AnalysisPanel::paint(juce::Graphics& g)
     g.setFont(Fonts::getFont());
     g.setColour(juce::Colours::black);
     g.drawSingleLineText(statusMessages[status], bounds.getWidth() / 2, 24, juce::Justification::horizontallyCentred);
+
+    g.setColour(Colors::Analysis::text);
 
     constexpr int lineHeight = 20;
     int y = 60;
@@ -96,7 +94,7 @@ void AnalysisPanel::paint(juce::Graphics& g)
     float peak = data.peak.load();
     float peakDecibels = -std::numeric_limits<float>::infinity();
     if (std::abs(peak) > 0.0f) {
-        peakDecibels = gainToDecibels(std::abs(peak));
+        peakDecibels = juce::Decibels::gainToDecibels(std::abs(peak));
     }
 
     y += lineHeight * 2;
@@ -105,7 +103,7 @@ void AnalysisPanel::paint(juce::Graphics& g)
         g.setColour(juce::Colours::red);
     }
     g.drawSingleLineText(s, 10, y);
-    g.setColour(juce::Colours::black);
+    g.setColour(Colors::Analysis::text);
 
     float historySize = float(data.historySize.load());
     float dcOffset = data.dcSum.load() / historySize;
@@ -114,11 +112,11 @@ void AnalysisPanel::paint(juce::Graphics& g)
     }
     float dcOffsetDecibels = -std::numeric_limits<float>::infinity();
     if (std::abs(dcOffset) > 0.0f) {
-        dcOffsetDecibels = gainToDecibels(std::abs(dcOffset));
+        dcOffsetDecibels = juce::Decibels::gainToDecibels(std::abs(dcOffset));
     }
     float dcMaxDecibels = -std::numeric_limits<float>::infinity();
     if (data.dcMax > 0.0f) {
-        dcMaxDecibels = gainToDecibels(data.dcMax);
+        dcMaxDecibels = juce::Decibels::gainToDecibels(data.dcMax);
     }
 
     y += lineHeight;
@@ -138,11 +136,11 @@ void AnalysisPanel::paint(juce::Graphics& g)
     }
     float rmsDecibels = -std::numeric_limits<float>::infinity();
     if (rms > 0.0f) {
-        rmsDecibels = gainToDecibels(rms);
+        rmsDecibels = juce::Decibels::gainToDecibels(rms);
     }
     float rmsMaxDecibels = -std::numeric_limits<float>::infinity();
     if (data.rmsMax > 0.0f) {
-        rmsMaxDecibels = gainToDecibels(data.rmsMax);
+        rmsMaxDecibels = juce::Decibels::gainToDecibels(data.rmsMax);
     }
 
     y += lineHeight;

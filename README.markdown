@@ -13,3 +13,8 @@
   - right now in Logic it shows up as Mono->Stereo mode, which works wrong... there is
     one input channel and two output channels, but right now this only renders to left
     and zeros out right
+
+- proper readme + GPLv3 license
+
+- do VUMeter as in Levels
+- fix other warnings

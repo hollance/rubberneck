@@ -25,9 +25,10 @@ private:
 
     AudioProcessor& audioProcessor;
 
-    RotaryKnob gainKnob;
-    RotaryKnob lowCutKnob;
-    RotaryKnob highCutKnob;
+    RotaryKnob gainKnob { RotaryKnob::Direction::center };
+    RotaryKnob lowCutKnob { RotaryKnob::Direction::left };
+    RotaryKnob highCutKnob { RotaryKnob::Direction::right };
+
     juce::TextButton minus6Button;
     juce::TextButton minus12Button;
     juce::TextButton bypassButton;
@@ -36,6 +37,7 @@ private:
     juce::TextButton swapChannelsButton;
     juce::TextButton protectYourEarsButton;
     juce::TextButton muteButton;
+
     SegmentedPicker channelsPicker;
     AnalysisPanel analysisPanel;
     VUMeter vuMeter;

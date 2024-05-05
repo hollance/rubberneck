@@ -3,7 +3,6 @@
 #include "LookAndFeel.h"
 
 SegmentedPicker::SegmentedPicker(juce::AudioParameterChoice& parameter) :
-    dropShadow(Colors::Knob::dropShadow, 4, { 0, 2 }),
     attachment(parameter, [this](float f){ setValue(f); })
 {
     for (int i = 0; i < parameter.choices.size(); ++i) {
@@ -46,45 +45,37 @@ void SegmentedPicker::setLookAndFeel(juce::LookAndFeel* newLookAndFeel)
 void SegmentedPicker::paint(juce::Graphics& g)
 {
     auto bounds = getLocalBounds().toFloat();
-    auto cornerSize = bounds.getHeight() * 0.25f;
-    auto buttonRect = bounds.reduced(4.0f, 2.0f).withTrimmedBottom(4.0f);
+    auto cornerSize = 4.0f;
+    auto buttonRect = bounds.reduced(1.5f, 2.5f);
 
-    auto path = juce::Path();
-    path.addRoundedRectangle(buttonRect, cornerSize, cornerSize);
-    dropShadow.drawForPath(g, path);
-
-    g.setColour(Colors::Knob::outline);
+    g.setColour(Colors::Button::background);
     g.fillRoundedRectangle(buttonRect, cornerSize);
 
-    auto innerRect = buttonRect.reduced(1.0f);
-    g.setGradientFill(juce::ColourGradient(
-        Colors::Knob::gradientTop, 0.0f, innerRect.getY(),
-        Colors::Knob::gradientBottom, 0.0f, innerRect.getBottom(), false));
-    g.fillRoundedRectangle(innerRect, cornerSize - 1.0f);
+    g.setColour(Colors::Button::border);
+    g.drawRoundedRectangle(buttonRect, cornerSize, 1.0f);
 
     g.setColour(juce::Colours::black.withAlpha(0.1f));
     for (int i = 1; i < getNumButtons(); ++i) {
-        g.fillRect(float(buttons[i]->getX()) - 1.0f, innerRect.getY(), 1.0f, innerRect.getHeight());
+        g.fillRect(float(buttons[size_t(i)]->getX()) - 1.0f,
+                   buttonRect.getY() + 1.0f,
+                   1.0f, buttonRect.getHeight() - 2.0f);
     }
 
-    g.setColour(Colors::Knob::outline);
-    for (int i = 1; i < getNumButtons(); ++i) {
-        g.fillRect(float(buttons[i]->getX()), innerRect.getY(), 1.0f, innerRect.getHeight());
-    }
+    auto buttonBounds = buttons[size_t(selectedIndex)]->getBounds().toFloat();
+    auto toggleRect = buttonBounds.reduced(0.0f, 3.0f).withTrimmedLeft(-1.0f);
 
-    auto buttonBounds = buttons[selectedIndex]->getBounds().toFloat();
-    auto buttonInnerRect = buttonBounds.reduced(0.0f, 3.0f).withTrimmedBottom(4.0f);
-    auto toggleRect = buttonInnerRect.withY(buttonInnerRect.getBottom() - 3.0f)
-        .withHeight(2.0f).withTrimmedLeft(6.0f).withTrimmedRight(6.0f);
-    g.setColour(Colors::Knob::trackActive);
-    g.fillRoundedRectangle(toggleRect, 1.0f);
+    g.setColour(Colors::Button::backgroundToggled);
+    g.fillRoundedRectangle(toggleRect, cornerSize);
+
+    g.setColour(Colors::Button::borderToggled);
+    g.drawRoundedRectangle(toggleRect, cornerSize, 2.0f);
 }
 
 void SegmentedPicker::resized()
 {
     int numButtons = getNumButtons();
 
-    float margin = 5.0f;
+    float margin = 2.0f;
     float width = float(getWidth());
     float segmentWidth = (width - 2.0f * margin) / float(numButtons);
 
@@ -93,11 +84,11 @@ void SegmentedPicker::resized()
 
     for (int i = 0; i < numButtons; ++i) {
         if (i == numButtons - 1) {
-            xb = int(width - margin);
+            xb = int(width + 1.0f - margin);
         } else {
             xb = int(margin + segmentWidth * float(i + 1));
         }
-        buttons[i]->setBounds(xa, 0, xb - xa, getHeight());
+        buttons[size_t(i)]->setBounds(xa, 0, xb - xa, getHeight());
         xa = xb;
     }
 }
@@ -115,7 +106,7 @@ void SegmentedPicker::buttonClicked(juce::Button* button)
     if (ignoreCallbacks) { return; }
 
     for (int i = 0; i < getNumButtons(); ++i) {
-        if (button == buttons[i].get()) {
+        if (button == buttons[size_t(i)].get()) {
             attachment.setValueAsCompleteGesture(float(i));
             break;
         }

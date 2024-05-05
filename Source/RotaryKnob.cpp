@@ -2,11 +2,12 @@
 
 static constexpr float pi = juce::MathConstants<float>::pi;
 
-RotaryKnob::RotaryKnob()
+RotaryKnob::RotaryKnob(Direction direction_) : direction(direction_)
 {
     setSizes(80, 22, 16);
     slider.setSliderStyle(juce::Slider::SliderStyle::RotaryHorizontalVerticalDrag);
     slider.setRotaryParameters(1.25f * pi, 2.75f * pi, true);
+    slider.getProperties().set("direction", int(direction));
     addAndMakeVisible(slider);
 }
 

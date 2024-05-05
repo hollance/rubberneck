@@ -25,8 +25,6 @@ public:
     }
 
 private:
-    juce::DropShadow dropShadow;
-
     void setValue(float newValue);
     void buttonClicked(juce::Button* button) override;
 

@@ -2,25 +2,8 @@
 
 #include <JuceHeader.h>
 #include "AnalysisData.h"
+#include "Parameters.h"
 #include "StateVariableFilter.h"
-
-namespace ParameterID
-{
-    #define PARAMETER_ID(str) const juce::ParameterID str(#str, 1);
-
-    PARAMETER_ID(bypass)
-    PARAMETER_ID(gain)
-    PARAMETER_ID(invertLeft)
-    PARAMETER_ID(invertRight)
-    PARAMETER_ID(swapChannels)
-    PARAMETER_ID(channels)
-    PARAMETER_ID(protectYourEars)
-    PARAMETER_ID(mute)
-    PARAMETER_ID(lowCut)
-    PARAMETER_ID(highCut)
-
-    #undef PARAMETER_ID
-}
 
 class AudioProcessor : public juce::AudioProcessor
 {
@@ -52,42 +35,13 @@ public:
     void setStateInformation(const void* data, int sizeInBytes) override;
     juce::AudioProcessorEditor* createEditor() override;
 
-    juce::AudioProcessorValueTreeState apvts { *this, nullptr, "Parameters", createParameterLayout() };
-
-    juce::AudioParameterFloat* gainParam;
-    juce::AudioParameterChoice* channelsParam;
-    juce::AudioParameterFloat* lowCutParam;
-    juce::AudioParameterFloat* highCutParam;
-
+    juce::AudioProcessorValueTreeState apvts;
+    Parameters params;
     AnalysisData analysis;
 
 private:
-    juce::AudioProcessorValueTreeState::ParameterLayout createParameterLayout();
-
-    void update() noexcept;
-    void smoothen() noexcept;
-
-    juce::AudioParameterBool* bypassParam;
-    juce::AudioParameterBool* invertLeftParam;
-    juce::AudioParameterBool* invertRightParam;
-    juce::AudioParameterBool* swapChannelsParam;
-    juce::AudioParameterBool* protectYourEarsParam;
-    juce::AudioParameterBool* muteParam;
-
-    juce::LinearSmoothedValue<float> gainSmoother;
-    juce::LinearSmoothedValue<double> lowCutSmoother;
-    juce::LinearSmoothedValue<double> highCutSmoother;
-
-    bool bypassed;
-    bool invertLeft;
-    bool invertRight;
-    bool swapChannels;
-    bool protectYourEars;
-    bool mute;
-    float gain;
-    double lowCut, lastLowCut;
-    double highCut, lastHighCut;
-    int channels;
+    double lastLowCut;
+    double lastHighCut;
 
     int historyIndex;
     int historySize;

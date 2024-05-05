@@ -4,7 +4,6 @@
               addUsingNamespaceToJuceHeader="0" jucerFormatVersion="1">
   <MAINGROUP id="LYgoZG" name="Rubberneck">
     <GROUP id="{49C6EAF0-D3DE-E91A-1A4F-175EA64143B8}" name="Assets">
-      <FILE id="XD5zDT" name="Logo.png" compile="0" resource="1" file="Assets/Logo.png"/>
       <FILE id="qQyDFH" name="VictorMono-Regular.ttf" compile="0" resource="1"
             file="Assets/VictorMono-Regular.ttf"/>
     </GROUP>
@@ -13,10 +12,10 @@
       <FILE id="GOJgx7" name="AnalysisPanel.cpp" compile="1" resource="0"
             file="Source/AnalysisPanel.cpp"/>
       <FILE id="q3F9Tn" name="AnalysisPanel.h" compile="0" resource="0" file="Source/AnalysisPanel.h"/>
-      <FILE id="IJUBXZ" name="DSP.h" compile="0" resource="0" file="Source/DSP.h"/>
-      <FILE id="GHM1xe" name="JuceUtils.h" compile="0" resource="0" file="Source/JuceUtils.h"/>
       <FILE id="EwiW6X" name="LookAndFeel.cpp" compile="1" resource="0" file="Source/LookAndFeel.cpp"/>
       <FILE id="Vgpcnp" name="LookAndFeel.h" compile="0" resource="0" file="Source/LookAndFeel.h"/>
+      <FILE id="YGvjaY" name="Parameters.cpp" compile="1" resource="0" file="Source/Parameters.cpp"/>
+      <FILE id="vASN5O" name="Parameters.h" compile="0" resource="0" file="Source/Parameters.h"/>
       <FILE id="DxGPNb" name="PluginEditor.cpp" compile="1" resource="0"
             file="Source/PluginEditor.cpp"/>
       <FILE id="sSrMpP" name="PluginEditor.h" compile="0" resource="0" file="Source/PluginEditor.h"/>
@@ -58,7 +57,7 @@
   <EXPORTFORMATS>
     <XCODE_MAC targetFolder="Builds/MacOSX" extraCompilerFlags="-Wall -Wextra">
       <CONFIGURATIONS>
-        <CONFIGURATION isDebug="1" name="Debug" targetName="Rubberneck"/>
+        <CONFIGURATION isDebug="1" name="Debug" targetName="Rubberneck" recommendedWarnings="LLVM"/>
         <CONFIGURATION isDebug="0" name="Release" targetName="Rubberneck"/>
       </CONFIGURATIONS>
       <MODULEPATHS>

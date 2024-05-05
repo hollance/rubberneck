@@ -4,56 +4,53 @@
 
 namespace Colors
 {
-    const juce::Colour background { 245, 240, 235 };
-    const juce::Colour tooltip { 120, 120, 120 };
+    const juce::Colour background { 241, 239, 243 };
+    const juce::Colour tooltip { 121, 120, 122 };
 
     namespace Knob
     {
-        const juce::Colour trackBackground { 205, 200, 195 };
+        const juce::Colour trackBackground { 217, 216, 219 };
         const juce::Colour trackActive { 248, 160, 88 };
-        const juce::Colour trackFromCenter { 213, 116, 212 };
-        const juce::Colour outline { 255, 250, 245 };
-        const juce::Colour gradientTop { 250, 245, 240 };
-        const juce::Colour gradientBottom { 240, 235, 230 };
-        const juce::Colour dial { 100, 100, 100 };
-        const juce::Colour dropShadow { 195, 190, 185 };
-        const juce::Colour label { 80, 80, 80 };
-        const juce::Colour textBoxBackground { 80, 80, 80 };
-        const juce::Colour value { 240, 240, 240 };
-        const juce::Colour caret { 255, 255, 255 };
-    };
+        const juce::Colour dial { 101, 100, 102 };
+        const juce::Colour label { 121, 120, 122 };
+        const juce::Colour value { 64, 63, 65 };
+        const juce::Colour caret { 0, 0, 0 };
+    }
 
     namespace BarButton
     {
-        const juce::Colour background { 248, 160, 88 };
+        const juce::Colour background { 241, 239, 243 };
         const juce::Colour backgroundToggled { 255, 255, 255 };
-        const juce::Colour borderToggled { 255, 255, 255 };
-        const juce::Colour border { 255, 255, 255 };
-        const juce::Colour text { 255, 255, 255 };
-        const juce::Colour textToggled { 248, 160, 88 };
-    };
+        const juce::Colour border { 121, 120, 122 };
+        const juce::Colour borderToggled { 173, 169, 174 };
+        const juce::Colour text { 31, 30, 32 };
+        const juce::Colour textToggled { 121, 120, 122 };
+    }
 
     namespace Button
     {
-        const juce::Colour text { 80, 80, 80 };
-        const juce::Colour textToggled { 255, 255, 255 };
-        const juce::Colour gradientTopToggled { 248, 160, 88 };
-        const juce::Colour gradientBottomToggled  { 255, 195, 140 };
-    };
+        const juce::Colour background { 241, 239, 243 };
+        const juce::Colour backgroundToggled { 255, 255, 255 };
+        const juce::Colour border { 173, 169, 174 };
+        const juce::Colour borderToggled { 248, 160, 88 };
+        const juce::Colour text { 64, 63, 65 };
+        const juce::Colour textToggled { 31, 30, 32 };
+    }
 
-    namespace RoundButton
+    namespace CircleButton
     {
-        const juce::Colour background { 100, 100, 100 };
-        const juce::Colour backgroundPressed { 80, 80, 80 };
-        const juce::Colour text { 240, 240, 240 };
-    };
+        const juce::Colour background { 121, 120, 122 };
+        const juce::Colour backgroundPressed { 64, 63, 65 };
+        const juce::Colour text { 241, 239, 243 };
+    }
 
     namespace Analysis
     {
-        const juce::Colour background { 205, 200, 195 };
-        const juce::Colour dropShadow { 175, 170, 165 };
-    };
-};
+        const juce::Colour background { 255, 255, 255 };
+        const juce::Colour border { 217, 216, 219 };
+        const juce::Colour text { 121, 120, 122 };
+    }
+}
 
 class Fonts
 {
@@ -67,17 +64,11 @@ private:
 class RotaryKnobLookAndFeel : public juce::LookAndFeel_V4
 {
 public:
-    RotaryKnobLookAndFeel(bool fromCenter = false);
+    RotaryKnobLookAndFeel();
 
     static RotaryKnobLookAndFeel* get()
     {
         static RotaryKnobLookAndFeel instance;
-        return &instance;
-    }
-
-    static RotaryKnobLookAndFeel* getCentered()
-    {
-        static RotaryKnobLookAndFeel instance { true };
         return &instance;
     }
 
@@ -90,10 +81,6 @@ public:
     void drawLabel(juce::Graphics&, juce::Label&) override;
     void fillTextEditorBackground(juce::Graphics&, int width, int height, juce::TextEditor&) override;
     void drawTextEditorOutline(juce::Graphics&, int width, int height, juce::TextEditor&) override;
-
-protected:
-    bool fromCenter;
-    juce::DropShadow dropShadow;
 
 private:
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(RotaryKnobLookAndFeel)
@@ -142,8 +129,6 @@ public:
                         bool shouldDrawButtonAsHighlighted,
                         bool shouldDrawButtonAsDown) override;
 private:
-    juce::DropShadow dropShadow;
-
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(ButtonLookAndFeel)
 };
 
@@ -170,14 +155,14 @@ private:
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(PickerButtonLookAndFeel)
 };
 
-class RoundButtonLookAndFeel : public juce::LookAndFeel_V4
+class CircleButtonLookAndFeel : public juce::LookAndFeel_V4
 {
 public:
-    RoundButtonLookAndFeel();
+    CircleButtonLookAndFeel();
 
-    static RoundButtonLookAndFeel* get()
+    static CircleButtonLookAndFeel* get()
     {
-        static RoundButtonLookAndFeel instance;
+        static CircleButtonLookAndFeel instance;
         return &instance;
     }
 
@@ -190,5 +175,5 @@ public:
                         bool shouldDrawButtonAsHighlighted,
                         bool shouldDrawButtonAsDown) override;
 private:
-    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(RoundButtonLookAndFeel)
+    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(CircleButtonLookAndFeel)
 };

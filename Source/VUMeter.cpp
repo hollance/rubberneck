@@ -1,7 +1,6 @@
 #include <JuceHeader.h>
 #include "VUMeter.h"
 #include "LookAndFeel.h"
-#include "DSP.h"
 
 VUMeter::VUMeter(std::atomic<float>& levelLeft, std::atomic<float>& levelRight,
                  std::atomic<float>& levelMids, std::atomic<float>& levelSides)
@@ -158,7 +157,8 @@ void VUMeter::updateChannel(Channel &channel, std::atomic<float>& value)
     // Since we applied the filter before conversion to dB, the animation
     // becomes linear in dB space instead of exponential.
     if (channel.level > 0.0f) {
-        channel.leveldB = std::clamp(gainToDecibels(channel.level), clampdB, maxdB);
+        auto decibels = juce::Decibels::gainToDecibels(channel.level);
+        channel.leveldB = std::clamp(decibels, clampdB, maxdB);
     } else {
         channel.leveldB = clampdB;
     }
@@ -173,7 +173,8 @@ void VUMeter::updateChannel(Channel &channel, std::atomic<float>& value)
     } else if (channel.peakdB > clampdB) {
         channel.peak += peakDecay * (channel.level - channel.peak);
         if (channel.peak > 0.0f) {
-            channel.peakdB = std::clamp(gainToDecibels(channel.peak), clampdB, maxdB);
+            auto decibels = juce::Decibels::gainToDecibels(channel.peak);
+            channel.peakdB = std::clamp(decibels, clampdB, maxdB);
         } else {
             channel.peakdB = clampdB;
         }
