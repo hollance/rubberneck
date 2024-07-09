@@ -6,7 +6,7 @@ const juce::Typeface::Ptr Fonts::typeface = juce::Typeface::createSystemTypeface
 
 juce::Font Fonts::getFont(float height)
 {
-    return juce::Font(typeface).withHeight(height);
+    return juce::Font(juce::FontOptions(typeface).withHeight(height));
 }
 
 // =============================================================================

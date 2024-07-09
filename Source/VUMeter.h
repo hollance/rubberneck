@@ -48,12 +48,12 @@ private:
     static constexpr int refreshRate = 20;
     static constexpr int holdMax = refreshRate * 2;
 
-    float minPos;          // maxdB line
-    float maxPos;          // mindB line
-    float positionRed;     // 0 dB line
-    float positionYellow;  // -12 dB line
+    float minPos;        // maxdB line
+    float maxPos;        // mindB line
+    int positionRed;     // 0 dB line
+    int positionYellow;  // -12 dB line
 
-    float attack;          // filter coefficients
+    float attack;        // filter coefficients
     float release;
     float peakDecay;
 

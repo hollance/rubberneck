@@ -38,10 +38,10 @@ void TooltipViewer::timerCallback()
     }
 }
 
-juce::String TooltipViewer::getTipFor(juce::Component& component)
+juce::String TooltipViewer::getTipFor(juce::Component& comp)
 {
-    auto* tooltipClient = dynamic_cast<juce::TooltipClient*>(&component);
-    if (tooltipClient && !component.isCurrentlyBlockedByAnotherModalComponent()) {
+    auto* tooltipClient = dynamic_cast<juce::TooltipClient*>(&comp);
+    if (tooltipClient && !comp.isCurrentlyBlockedByAnotherModalComponent()) {
         return tooltipClient->getTooltip();
     }
     return {};

@@ -13,8 +13,6 @@ AudioProcessorEditor::AudioProcessorEditor(AudioProcessor& p) :
     gainKnob.slider.setHelpText(gainKnob.slider.getDescription());
     gainKnob.slider.setTooltip(gainKnob.slider.getHelpText());
     gainKnob.slider.setLookAndFeel(RotaryKnobLookAndFeel::get());
-    gainKnob.setColor(Colors::Knob::label);
-    gainKnob.setFont(Fonts::getFont());
     addAndMakeVisible(gainKnob);
 
     invertLeftButton.setTitle("Phase invert left");
@@ -109,8 +107,6 @@ AudioProcessorEditor::AudioProcessorEditor(AudioProcessor& p) :
     lowCutKnob.slider.setHelpText(lowCutKnob.slider.getDescription());
     lowCutKnob.slider.setTooltip(lowCutKnob.slider.getHelpText());
     lowCutKnob.slider.setLookAndFeel(RotaryKnobLookAndFeel::get());
-    lowCutKnob.setColor(Colors::Knob::label);
-    lowCutKnob.setFont(Fonts::getFont());
     lowCutKnob.setSizes(60);
     lowCutKnob.maxInputLength = 6;
     addAndMakeVisible(lowCutKnob);
@@ -120,8 +116,6 @@ AudioProcessorEditor::AudioProcessorEditor(AudioProcessor& p) :
     highCutKnob.slider.setHelpText(highCutKnob.slider.getDescription());
     highCutKnob.slider.setTooltip(highCutKnob.slider.getHelpText());
     highCutKnob.slider.setLookAndFeel(RotaryKnobLookAndFeel::get());
-    highCutKnob.setColor(Colors::Knob::label);
-    highCutKnob.setFont(Fonts::getFont());
     highCutKnob.setSizes(60);
     highCutKnob.maxInputLength = 6;
     addAndMakeVisible(highCutKnob);

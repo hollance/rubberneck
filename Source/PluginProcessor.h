@@ -40,8 +40,8 @@ public:
     AnalysisData analysis;
 
 private:
-    double lastLowCut;
-    double lastHighCut;
+    float lastLowCut;
+    float lastHighCut;
 
     int historyIndex;
     int historySize;

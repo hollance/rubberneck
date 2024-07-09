@@ -1,13 +1,16 @@
 #include "RotaryKnob.h"
-
-static constexpr float pi = juce::MathConstants<float>::pi;
+#include "LookAndFeel.h"
 
 RotaryKnob::RotaryKnob(Direction direction_) : direction(direction_)
 {
     setSizes(80, 22, 16);
+
     slider.setSliderStyle(juce::Slider::SliderStyle::RotaryHorizontalVerticalDrag);
-    slider.setRotaryParameters(1.25f * pi, 2.75f * pi, true);
     slider.getProperties().set("direction", int(direction));
+
+    static constexpr float pi = juce::MathConstants<float>::pi;
+    slider.setRotaryParameters(1.25f * pi, 2.75f * pi, true);
+
     addAndMakeVisible(slider);
 }
 
@@ -28,21 +31,12 @@ void RotaryKnob::setLabel(const juce::String& newLabel)
     slider.setTitle(label);
 }
 
-void RotaryKnob::setColor(const juce::Colour& newColor)
-{
-    color = newColor;
-}
-
-void RotaryKnob::setFont(const juce::Font& newFont)
-{
-    font = newFont;
-}
-
 void RotaryKnob::paint(juce::Graphics& g)
 {
-    g.setFont(font);
-    g.setColour(color);
-    g.drawText(label, juce::Rectangle<int>{ 0, 2, knobWidth, captionHeight }, juce::Justification::centredTop);
+    g.setFont(Fonts::getFont());
+    g.setColour(Colors::Knob::label);
+    g.drawText(label, juce::Rectangle<int>{ 0, 2, knobWidth, captionHeight },
+               juce::Justification::centredTop);
 }
 
 void RotaryKnob::resized()

@@ -2,12 +2,14 @@
 #include "VUMeter.h"
 #include "LookAndFeel.h"
 
-VUMeter::VUMeter(std::atomic<float>& levelLeft, std::atomic<float>& levelRight,
-                 std::atomic<float>& levelMids, std::atomic<float>& levelSides)
-    : levelLeft(levelLeft),
-      levelRight(levelRight),
-      levelMids(levelMids),
-      levelSides(levelSides)
+VUMeter::VUMeter(std::atomic<float>& levelLeft_,
+                 std::atomic<float>& levelRight_,
+                 std::atomic<float>& levelMids_,
+                 std::atomic<float>& levelSides_)
+    : levelLeft(levelLeft_),
+      levelRight(levelRight_),
+      levelMids(levelMids_),
+      levelSides(levelSides_)
 {
     attack = 1.0f - std::exp(-1.0f / (float(refreshRate) * 0.01f));
     release = 1.0f - std::exp(-1.0f / (float(refreshRate) * 0.2f));

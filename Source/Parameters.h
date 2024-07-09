@@ -38,8 +38,8 @@ public:
     bool mute;
     int channels;
     float gain;
-    double lowCut;
-    double highCut;
+    float lowCut;
+    float highCut;
 
     juce::AudioParameterBool* bypassParam;
     juce::AudioParameterFloat* gainParam;
@@ -56,6 +56,6 @@ private:
     juce::AudioProcessorValueTreeState& apvts;
 
     juce::LinearSmoothedValue<float> gainSmoother;
-    juce::LinearSmoothedValue<double> lowCutSmoother;
-    juce::LinearSmoothedValue<double> highCutSmoother;
+    juce::LinearSmoothedValue<float> lowCutSmoother;
+    juce::LinearSmoothedValue<float> highCutSmoother;
 };

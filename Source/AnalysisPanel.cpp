@@ -18,7 +18,7 @@ static const juce::Colour statusColors[] =
     { 226, 74, 81 },
 };
 
-AnalysisPanel::AnalysisPanel(AnalysisData& data) : data(data)
+AnalysisPanel::AnalysisPanel(AnalysisData& data_) : data(data_)
 {
     clearButton.setTitle("Clear");
     clearButton.setDescription("Reset analysis results");
@@ -27,8 +27,8 @@ AnalysisPanel::AnalysisPanel(AnalysisData& data) : data(data)
     clearButton.setButtonText("Clear");
     clearButton.setBounds(0, 0, 80, 25);
     clearButton.setLookAndFeel(ButtonLookAndFeel::get());
-    clearButton.onClick = [&data](){
-        data.reset();
+    clearButton.onClick = [&data_](){
+        data_.reset();
     };
     addAndMakeVisible(clearButton);
 
@@ -58,7 +58,7 @@ void AnalysisPanel::paint(juce::Graphics& g)
 
     g.setFont(Fonts::getFont());
     g.setColour(juce::Colours::black);
-    g.drawSingleLineText(statusMessages[status], bounds.getWidth() / 2, 24, juce::Justification::horizontallyCentred);
+    g.drawSingleLineText(statusMessages[status], getWidth() / 2, 24, juce::Justification::horizontallyCentred);
 
     g.setColour(Colors::Analysis::text);
 

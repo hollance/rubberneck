@@ -77,7 +77,10 @@ void AudioProcessor::processBlock(
     auto numOutputChannels = getTotalNumOutputChannels();
     auto numSamples = buffer.getNumSamples();
 
-    analysis.sampleRate = getSampleRate();
+    float sampleRate = float(getSampleRate());
+    float nyquist = sampleRate * 0.5f;
+
+    analysis.sampleRate = sampleRate;
     analysis.inChannels = numInputChannels;
     analysis.outChannels = numOutputChannels;
     analysis.blockSize = numSamples;
@@ -90,9 +93,6 @@ void AudioProcessor::processBlock(
     params.update();
 
     if (params.bypassed) { return; }
-
-    auto sampleRate = getSampleRate();
-    auto nyquist = sampleRate * 0.5;
 
     bool stereo = numInputChannels > 1;
     float* channelL = buffer.getWritePointer(0);
@@ -118,18 +118,18 @@ void AudioProcessor::processBlock(
         }
 
         if (params.lowCut > 0.0f) {
-            double lowCut = std::min(params.lowCut, nyquist - 1.0);
+            float lowCut = std::min(params.lowCut, nyquist - 1.0f);
             if (lowCut != lastLowCut) {
-                lowCutFilter.highpass(sampleRate, lowCut, 0.70710678);
+                lowCutFilter.highpass(sampleRate, lowCut, 0.70710678f);
                 lastLowCut = lowCut;
             }
             sampleL = lowCutFilter.processSample(0, sampleL);
             sampleR = lowCutFilter.processSample(1, sampleR);
         }
         if (params.highCut < 24000.0f) {
-            double highCut = std::min(params.highCut, nyquist - 1.0);
+            float highCut = std::min(params.highCut, nyquist - 1.0f);
             if (highCut != lastHighCut) {
-                highCutFilter.lowpass(sampleRate, highCut, 0.70710678);
+                highCutFilter.lowpass(sampleRate, highCut, 0.70710678f);
                 lastHighCut = highCut;
             }
             sampleL = highCutFilter.processSample(0, sampleL);
