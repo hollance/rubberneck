@@ -1,31 +1,23 @@
 # Rubberneck
 
-While developing plug-ins, I usually put Rubberneck at the end of the chain for monitoring levels and protecting my ear drums against mistakes that lead to deafening feedback. It also provides some basic utility functions such as flipping polarity.
+While developing plug-ins, I usually put Rubberneck at the end of the chain for monitoring levels and protecting my eardrums against mistakes that lead to deafening feedback. It also provides some basic utility functions such as flipping polarity.
 
 ![Screenshot of Rubberneck](Rubberneck.jpg)
 
 ## How to build
 
-JUCE 8
+Requires JUCE 8.
 
 ## TODO
 
--	SIMD
-- faster drawing of VU meter
+The code isn't great or efficient. Forgive me, it's just a simple development tool. :wink:
 
--	other measurements:
-  -	True peak?
-  -	LUFS?
-  -	Block size: tally of which ones and how often / histogram?
+- Improve mono support. Right now in Logic it shows up as Mono->Stereo mode, which works wrong... there is one input channel and two output channels, but right now this only renders to left and zeros out right.
 
-- improve mono support
-  - it want this to show up as Mono | Stereo in Logic, not Mono->Stereo
-  - right now in Logic it shows up as Mono->Stereo mode, which works wrong... there is
-    one input channel and two output channels, but right now this only renders to left
-    and zeros out right
-
-- do VUMeter as in Levels
-- clean up the code
+-	Other measurements:
+    -	True peak?
+    -	LUFS?
+    -	Block size: tally of which ones and how often / histogram?
 
 ## Credits & license
 

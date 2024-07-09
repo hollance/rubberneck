@@ -13,7 +13,6 @@ class AudioProcessorEditor  : public juce::AudioProcessorEditor
 {
 public:
     AudioProcessorEditor(AudioProcessor&);
-    ~AudioProcessorEditor() override;
 
     void paint(juce::Graphics&) override;
     void resized() override;

@@ -14,7 +14,7 @@ public:
     TooltipViewer();
     void paint(juce::Graphics&) override;
 
-protected:
+private:
     void timerCallback() override;
     juce::String getTipFor(juce::Component& component);
 
@@ -22,6 +22,5 @@ protected:
     juce::Component* component = nullptr;
     std::atomic<bool> showTip { false };
 
-private:
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(TooltipViewer)
 };

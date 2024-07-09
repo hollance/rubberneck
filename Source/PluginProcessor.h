@@ -9,7 +9,6 @@ class AudioProcessor : public juce::AudioProcessor
 {
 public:
     AudioProcessor();
-    ~AudioProcessor() override;
 
     bool hasEditor() const override { return true; }
     const juce::String getName() const override { return JucePlugin_Name; }
@@ -27,7 +26,7 @@ public:
     juce::AudioProcessorParameter* getBypassParameter() const override;
     bool isBusesLayoutSupported(const BusesLayout& layouts) const override;
     void prepareToPlay(double sampleRate, int samplesPerBlock) override;
-    void releaseResources() override;
+    void releaseResources() override { }
     void reset() override;
     void processBlock(juce::AudioBuffer<float>&, juce::MidiBuffer&) override;
 
@@ -40,6 +39,9 @@ public:
     AnalysisData analysis;
 
 private:
+    void measureRMS(juce::AudioBuffer<float>& buffer);
+    void checkOverload(juce::AudioBuffer<float>& buffer);
+
     float lastLowCut;
     float lastHighCut;
 

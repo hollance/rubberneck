@@ -12,18 +12,10 @@ AudioProcessor::AudioProcessor() :
 {
 }
 
-AudioProcessor::~AudioProcessor()
-{
-}
-
 void AudioProcessor::prepareToPlay(double sampleRate, [[maybe_unused]] int samplesPerBlock)
 {
     params.prepare(sampleRate);
     reset();
-}
-
-void AudioProcessor::releaseResources()
-{
 }
 
 void AudioProcessor::reset()
@@ -42,6 +34,7 @@ void AudioProcessor::reset()
     rmsHistory.resize(historySize);
     std::fill(dcHistory.begin(), dcHistory.end(), 0.0f);
     std::fill(rmsHistory.begin(), rmsHistory.end(), 0.0f);
+
     historyIndex = 0;
     historyRefresh = 0;
     dcSum = 0.0f;
@@ -51,6 +44,7 @@ void AudioProcessor::reset()
     levelR = 0.0f;
     levelM = 0.0f;
     levelS = 0.0f;
+
     vuStep = 0;
     vuMax = int(std::ceil(getSampleRate() * 0.01));  // 10 ms
 
@@ -91,7 +85,6 @@ void AudioProcessor::processBlock(
     }
 
     params.update();
-
     if (params.bypassed) { return; }
 
     bool stereo = numInputChannels > 1;
@@ -126,6 +119,7 @@ void AudioProcessor::processBlock(
             sampleL = lowCutFilter.processSample(0, sampleL);
             sampleR = lowCutFilter.processSample(1, sampleR);
         }
+
         if (params.highCut < 24000.0f) {
             float highCut = std::min(params.highCut, nyquist - 1.0f);
             if (highCut != lastHighCut) {
@@ -146,11 +140,9 @@ void AudioProcessor::processBlock(
         if (std::abs(sampleM) > levelM) { levelM = std::abs(sampleM); }
         if (std::abs(sampleS) > levelS) { levelS = std::abs(sampleS); }
 
-        // Report the highest level every N ms. It's possible that a higher
-        // value is overwritten by a lower value if the UI does not read fast
-        // enough. I don't think that's a problem here, but could fix this by
-        // only updating the atomic when the new level is higher (for example,
-        // using compare_exchange_weak).
+        // Report the highest level every 10 ms. Not super happy with this
+        // approach. It's possible that a higher value is overwritten by a
+        // lower value if the UI does not read fast enough.
         vuStep += 1;
         if (vuStep == vuMax) {
             vuStep = 0;
@@ -178,6 +170,16 @@ void AudioProcessor::processBlock(
         channelR[sample] = sampleR;
     }
 
+    measureRMS(buffer);
+    checkOverload(buffer);
+
+    if (params.mute) {
+        buffer.clear();
+    }
+}
+
+void AudioProcessor::measureRMS(juce::AudioBuffer<float>& buffer)
+{
     /*
         I calculate the RMS / DC offset using a 300 ms circular buffer.
 
@@ -194,12 +196,12 @@ void AudioProcessor::processBlock(
 
     // Gather statistics. Note that JUCE also has buffer.getMagnitude()
     // and buffer.getRMSLevel(), which may be vector optimized.
-    for (int channel = 0; channel < numInputChannels; ++channel) {
+    for (int channel = 0; channel < buffer.getNumChannels(); ++channel) {
         float* data = buffer.getWritePointer(channel);
-        for (int i = 0; i < numSamples; ++i) {
+        for (int i = 0; i < buffer.getNumSamples(); ++i) {
             float x = data[i];
-            if (!std::isnan(x) && !std::isinf(x)) {
-                // Measure peak
+            if (std::isfinite(x)) {
+                // Measure peak.
                 float y = std::abs(x);
                 if (y > std::abs(analysis.peak)) {
                     analysis.peak = x;
@@ -225,7 +227,7 @@ void AudioProcessor::processBlock(
         }
     }
 
-    // To avoid floating point issues, such as an offset from building up,
+    // To avoid floating point issues such as an offset from building up,
     // periodically reset the running sum by adding up all the numbers in
     // the circular buffer.
     if (historyRefresh > 10) {
@@ -248,7 +250,10 @@ void AudioProcessor::processBlock(
     // divides by N and takes the square root.
     analysis.dcSum = dcSum;
     analysis.rmsSum = rmsSum;
+}
 
+void AudioProcessor::checkOverload(juce::AudioBuffer<float>& buffer)
+{
     // Clipping is temporary but we want to be notified without a doubt when
     // there are inf or nan values, so don't overwrite the "holy shit" state.
     if (analysis.status < 3) {
@@ -259,9 +264,9 @@ void AudioProcessor::processBlock(
     // The main reason to turn it off is to analyze the actual sound levels
     // using a spectrum analyzer or other tool, so we don't want to clip there.
     bool firstWarning = true;
-    for (int channel = 0; channel < numInputChannels; ++channel) {
+    for (int channel = 0; channel < buffer.getNumChannels(); ++channel) {
         float* data = buffer.getWritePointer(channel);
-        for (int i = 0; i < numSamples; ++i) {
+        for (int i = 0; i < buffer.getNumSamples(); ++i) {
             float x = data[i];
             bool silence = false;
             if (std::isnan(x)) {
@@ -308,15 +313,10 @@ void AudioProcessor::processBlock(
                 }
             }
             if (silence) {
-//TODO: buffer.clear(channel) instead of memset
-                std::memset(data, 0, numSamples * sizeof(float));
-                break;
+                buffer.clear();
+                return;
             }
         }
-    }
-
-    if (params.mute) {
-        buffer.clear();
     }
 }
 

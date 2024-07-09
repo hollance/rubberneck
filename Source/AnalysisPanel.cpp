@@ -36,10 +36,6 @@ AnalysisPanel::AnalysisPanel(AnalysisData& data_) : data(data_)
     startTimerHz(30);
 }
 
-AnalysisPanel::~AnalysisPanel()
-{
-}
-
 void AnalysisPanel::paint(juce::Graphics& g)
 {
     const auto bounds = getLocalBounds().toFloat();
@@ -58,7 +54,8 @@ void AnalysisPanel::paint(juce::Graphics& g)
 
     g.setFont(Fonts::getFont());
     g.setColour(juce::Colours::black);
-    g.drawSingleLineText(statusMessages[status], getWidth() / 2, 24, juce::Justification::horizontallyCentred);
+    g.drawSingleLineText(statusMessages[status], getWidth() / 2, 24,
+                         juce::Justification::horizontallyCentred);
 
     g.setColour(Colors::Analysis::text);
 
@@ -77,7 +74,8 @@ void AnalysisPanel::paint(juce::Graphics& g)
 
     y += lineHeight;
     if (data.inChannels != -1) {
-        std::snprintf(s, bufSize, "Channels      in %d out %d", data.inChannels.load(), data.outChannels.load());
+        std::snprintf(s, bufSize, "Channels      in %d out %d",
+                      data.inChannels.load(), data.outChannels.load());
     } else {
         std::strcpy(s, "Channels      unknown");
     }
@@ -155,7 +153,9 @@ void AnalysisPanel::paint(juce::Graphics& g)
 void AnalysisPanel::resized()
 {
     const auto bounds = getLocalBounds();
-    clearButton.setTopRightPosition(bounds.getRight() - 8, bounds.getBottom() - clearButton.getHeight() - 5);
+    clearButton.setTopRightPosition(
+        bounds.getRight() - 8,
+        bounds.getBottom() - clearButton.getHeight() - 5);
 }
 
 void AnalysisPanel::timerCallback()

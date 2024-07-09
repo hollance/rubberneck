@@ -29,10 +29,6 @@ VUMeter::VUMeter(std::atomic<float>& levelLeft_,
     startTimerHz(refreshRate);
 }
 
-VUMeter::~VUMeter()
-{
-}
-
 void VUMeter::paint(juce::Graphics& g)
 {
     // This can be optimized by:
@@ -151,8 +147,6 @@ void VUMeter::updateChannel(Channel &channel, std::atomic<float>& value)
     // cause the animation to decay even when the audio processing stops.
     float newLevel = value.exchange(0.0f);
 
-    // Sometimes attack isn't used and if new level > current level, the level
-    // immediately jumps to the new value. (Same as setting attack to 1.0.)
     float coeff = newLevel > channel.level ? attack : release;
     channel.level += coeff * (newLevel - channel.level);
 

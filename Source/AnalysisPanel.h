@@ -7,7 +7,6 @@ class AnalysisPanel : public juce::Component, private juce::Timer
 {
 public:
     AnalysisPanel(AnalysisData& data);
-    ~AnalysisPanel() override;
 
     void paint(juce::Graphics&) override;
     void resized() override;

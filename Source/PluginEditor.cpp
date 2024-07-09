@@ -158,10 +158,6 @@ AudioProcessorEditor::AudioProcessorEditor(AudioProcessor& p) :
     setSize(640, 430);
 }
 
-AudioProcessorEditor::~AudioProcessorEditor()
-{
-}
-
 void AudioProcessorEditor::paint(juce::Graphics& g)
 {
     g.fillAll(Colors::background);
