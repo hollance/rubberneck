@@ -1,7 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <JUCERPROJECT id="hT9789" name="Rubberneck" projectType="audioplug" useAppConfig="0"
-              addUsingNamespaceToJuceHeader="0" jucerFormatVersion="1">
+              addUsingNamespaceToJuceHeader="0" jucerFormatVersion="1" companyName="audiodev.blog"
+              companyWebsite="audiodev.blog" bundleIdentifier="blog.audiodev.Rubberneck"
+              pluginManufacturerCode="Dvbl" pluginCode="Rbnk">
   <MAINGROUP id="LYgoZG" name="Rubberneck">
     <GROUP id="{49C6EAF0-D3DE-E91A-1A4F-175EA64143B8}" name="Assets">
       <FILE id="qQyDFH" name="VictorMono-Regular.ttf" compile="0" resource="1"
